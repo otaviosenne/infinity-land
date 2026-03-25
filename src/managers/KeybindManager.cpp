@@ -14,6 +14,8 @@
 #include "../layout/CanvasSnap.hpp"
 #include "../layout/CanvasLayout.hpp"
 #include "../canvas/CanvasPersistence.hpp"
+#include "../canvas/CanvasTags.hpp"
+#include "../canvas/CanvasViews.hpp"
 #include "Compositor.hpp"
 #include "TokenManager.hpp"
 #include "eventLoop/EventLoopManager.hpp"
@@ -152,6 +154,8 @@ CKeybindManager::CKeybindManager() {
     m_dispatchers["canvas:zoomtofit"]               = canvasZoomToFit;
     m_dispatchers["canvas:quickjump"]              = canvasQuickJump;
     m_dispatchers["canvas:gridsnap"]               = canvasGridSnap;
+    m_dispatchers["canvas:tag"]                    = canvasTag;
+    m_dispatchers["canvas:view"]                   = canvasView;
 
     m_scrollTimer.reset();
 
@@ -3385,5 +3389,35 @@ SDispatchResult CKeybindManager::canvasGridSnap(std::string args) {
 
     g_pCanvasPersistence->scheduleSave();
     g_pCanvasViewport->damageAllMonitors();
+    return {};
+}
+
+SDispatchResult CKeybindManager::canvasTag(std::string args) {
+    if (!g_pCanvasTags)
+        return {.success = false, .error = "Canvas tags not initialized"};
+
+    const auto PWINDOW = g_pCompositor->m_lastWindow.lock();
+    if (!PWINDOW)
+        return {.success = false, .error = "No focused window"};
+
+    g_pCanvasTags->setTag(PWINDOW, args);
+    g_pCanvasPersistence->scheduleSave();
+    g_pCanvasViewport->damageAllMonitors();
+    return {};
+}
+
+SDispatchResult CKeybindManager::canvasView(std::string args) {
+    if (!g_pCanvasViews)
+        return {.success = false, .error = "Canvas views not initialized"};
+
+    static constexpr std::string_view CREATE_PREFIX = "create:";
+
+    if (args.starts_with(CREATE_PREFIX)) {
+        g_pCanvasViews->createView(args.substr(CREATE_PREFIX.size()));
+    } else {
+        g_pCanvasViews->switchView(args);
+    }
+
+    g_pCanvasPersistence->scheduleSave();
     return {};
 }

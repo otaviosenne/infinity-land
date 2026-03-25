@@ -1,6 +1,8 @@
 #include "CanvasLayout.hpp"
 #include "CanvasSnap.hpp"
 #include "../canvas/CanvasPersistence.hpp"
+#include "../canvas/CanvasTags.hpp"
+#include "../canvas/CanvasViews.hpp"
 #include "../canvas/CanvasViewport.hpp"
 #include "../Compositor.hpp"
 #include "../helpers/Monitor.hpp"
@@ -10,6 +12,8 @@
 #include "../managers/KeybindManager.hpp"
 
 void CCanvasLayout::onEnable() {
+    g_pCanvasTags        = makeUnique<CCanvasTags>();
+    g_pCanvasViews       = makeUnique<CCanvasViews>();
     g_pCanvasPersistence = makeUnique<CCanvasPersistence>();
     g_pCanvasPersistence->load();
 }

@@ -36,6 +36,7 @@
 #include "../canvas/CanvasViewport.hpp"
 #include "../canvas/CanvasMinimap.hpp"
 #include "../canvas/CanvasQuickJump.hpp"
+#include "../canvas/CanvasTags.hpp"
 #include "debug/Log.hpp"
 #include "../protocols/ColorManagement.hpp"
 #include "../protocols/types/ContentType.hpp"
@@ -707,6 +708,30 @@ void CHyprRenderer::renderWindow(PHLWINDOW pWindow, PHLMONITOR pMonitor, const T
 
                 wd->draw(pMonitor, fullAlpha);
             }
+        }
+    }
+
+    if (g_pCanvasTags && g_pCanvasViewport && mode != RENDER_PASS_POPUP) {
+        const auto tagColor = g_pCanvasTags->getTag(pWindow);
+        if (!tagColor.empty()) {
+            const auto rgba      = CCanvasTags::colorToRGBA(tagColor);
+            const auto tagSize   = 8.0 * g_pCanvasViewport->scale();
+            const auto padding   = 4.0 * g_pCanvasViewport->scale();
+            const auto dotX      = textureBox.x + textureBox.w - tagSize - padding - pMonitor->m_position.x;
+            const auto dotY      = textureBox.y + padding - pMonitor->m_position.y;
+            CBox       dotBox    = {dotX, dotY, tagSize, tagSize};
+            dotBox.scale(pMonitor->m_scale);
+
+            const float r = ((rgba >> 24) & 0xFF) / 255.0f;
+            const float g = ((rgba >> 16) & 0xFF) / 255.0f;
+            const float b = ((rgba >> 8) & 0xFF) / 255.0f;
+            const float a = (rgba & 0xFF) / 255.0f;
+
+            CRectPassElement::SRectData dotData;
+            dotData.color = CHyprColor(r, g, b, a * fullAlpha);
+            dotData.box   = dotBox;
+            dotData.round = tagSize / 2.0f;
+            m_renderPass.add(makeUnique<CRectPassElement>(dotData));
         }
     }
 

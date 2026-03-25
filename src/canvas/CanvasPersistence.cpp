@@ -1,4 +1,6 @@
 #include "CanvasPersistence.hpp"
+#include "CanvasTags.hpp"
+#include "CanvasViews.hpp"
 #include "../debug/Log.hpp"
 #include <nlohmann/json.hpp>
 #include <fstream>
@@ -45,6 +47,12 @@ void CCanvasPersistence::load() {
             }
         }
 
+        if (data.contains("tags") && g_pCanvasTags)
+            g_pCanvasTags->fromJson(data["tags"]);
+
+        if (data.contains("views") && g_pCanvasViews)
+            g_pCanvasViews->fromJson(data["views"]);
+
         Debug::log(LOG, "CanvasPersistence: loaded {} windows, {} app defaults", m_windows.size(), m_appDefaults.size());
     } catch (const std::exception& e) {
         Debug::log(WARN, "CanvasPersistence: failed to load state: {}", e.what());
@@ -73,6 +81,12 @@ void CCanvasPersistence::saveNow() {
         defaults[key] = {{"w", val.size.x}, {"h", val.size.y}};
     }
     data["app_defaults"] = defaults;
+
+    if (g_pCanvasTags)
+        data["tags"] = g_pCanvasTags->toJson();
+
+    if (g_pCanvasViews)
+        data["views"] = g_pCanvasViews->toJson();
 
     const auto path    = configPath();
     const auto tmpPath = path + ".tmp";
