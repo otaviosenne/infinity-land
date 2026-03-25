@@ -91,11 +91,11 @@ Plans:
   2. Dot spacing adapts at low zoom to avoid visual clutter
   3. Dots near the cursor glow with a radial gradient that follows mouse movement
   4. User can toggle between dark and light theme via a button
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 05-01: TBD
-- [ ] 05-02: TBD
+- [ ] 05-01-PLAN.md — Dot grid fragment shader and background rendering pipeline
+- [ ] 05-02-PLAN.md — Cursor glow effect and dark/light theme toggle
 
 ### Phase 6: Persistence
 **Goal**: Canvas state survives compositor restarts
@@ -199,7 +199,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 2. Canvas Viewport | 1/2 | In Progress|  |
 | 3. Canvas Layout | 0/1 | Not started | - |
 | 4. Layer-Shell Compatibility | 0/1 | Not started | - |
-| 5. Canvas Background | 0/? | Not started | - |
+| 5. Canvas Background | 0/2 | Not started | - |
 | 6. Persistence | 0/? | Not started | - |
 | 7. Navigation | 0/? | Not started | - |
 | 8. Window Organization | 0/? | Not started | - |
