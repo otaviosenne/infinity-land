@@ -24,6 +24,7 @@
 #include "../protocols/LinuxDMABUF.hpp"
 #include "../helpers/sync/SyncTimeline.hpp"
 #include "../hyprerror/HyprError.hpp"
+#include "../canvas/CanvasBackground.hpp"
 #include "../debug/HyprDebugOverlay.hpp"
 #include "../debug/HyprNotificationOverlay.hpp"
 #include "helpers/Monitor.hpp"
@@ -893,6 +894,9 @@ void CHyprRenderer::renderAllClientsForWorkspace(PHLMONITOR pMonitor, PHLWORKSPA
         else
             g_pHyprOpenGL->clearWithTex(); // will apply the hypr "wallpaper"
 
+        if (g_pCanvasBackground)
+            g_pCanvasBackground->render(pMonitor, g_pHyprOpenGL->m_renderData.damage);
+
         for (auto const& ls : pMonitor->m_layerSurfaceLayers[ZWLR_LAYER_SHELL_V1_LAYER_BACKGROUND]) {
             renderLayer(ls.lock(), pMonitor, time);
         }
@@ -919,6 +923,9 @@ void CHyprRenderer::renderAllClientsForWorkspace(PHLMONITOR pMonitor, PHLWORKSPA
             m_renderPass.add(makeUnique<CClearPassElement>(CClearPassElement::SClearData{CHyprColor(*PBACKGROUNDCOLOR)}));
         else
             g_pHyprOpenGL->clearWithTex(); // will apply the hypr "wallpaper"
+
+        if (g_pCanvasBackground)
+            g_pCanvasBackground->render(pMonitor, g_pHyprOpenGL->m_renderData.damage);
 
         for (auto const& ls : pMonitor->m_layerSurfaceLayers[ZWLR_LAYER_SHELL_V1_LAYER_BACKGROUND]) {
             renderLayer(ls.lock(), pMonitor, time);

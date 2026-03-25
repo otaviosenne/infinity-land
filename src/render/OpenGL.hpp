@@ -97,6 +97,7 @@ struct SPreparedShaders {
     SShader     m_shSHADOW;
     SShader     m_shBORDER1;
     SShader     m_shGLITCH;
+    SShader     m_shDOTGRID;
     SShader     m_shCM;
 };
 
