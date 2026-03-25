@@ -9,11 +9,11 @@
 
 - [x] **CANV-01**: User can pan the canvas with middle mouse button or space+drag
 - [x] **CANV-02**: User can zoom the canvas with scroll wheel (linear, fast, no easing)
-- [ ] **CANV-03**: Canvas displays a dot grid background at all zoom levels
+- [x] **CANV-03**: Canvas displays a dot grid background at all zoom levels
 - [ ] **CANV-04**: Dot grid glows near the cursor with radial gradient animation
 - [x] **CANV-05**: Canvas spans both monitors (DP-1 + HDMI-A-1) as one continuous surface
 - [ ] **CANV-06**: Window positions and sizes persist across compositor restarts
-- [ ] **CANV-07**: Grid dots adapt spacing at low zoom levels to avoid visual clutter
+- [x] **CANV-07**: Grid dots adapt spacing at low zoom levels to avoid visual clutter
 
 ### Window Management
 
@@ -88,11 +88,11 @@
 |-------------|-------|--------|
 | CANV-01 | Phase 2 | Complete |
 | CANV-02 | Phase 2 | Complete |
-| CANV-03 | Phase 5 | Pending |
+| CANV-03 | Phase 5 | Complete |
 | CANV-04 | Phase 5 | Pending |
 | CANV-05 | Phase 2 | Complete |
 | CANV-06 | Phase 6 | Pending |
-| CANV-07 | Phase 5 | Pending |
+| CANV-07 | Phase 5 | Complete |
 | WNDW-01 | Phase 3 | Pending |
 | WNDW-02 | Phase 3 | Pending |
 | WNDW-03 | Phase 8 | Pending |

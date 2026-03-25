@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v0.51
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 02-01-PLAN.md
-last_updated: "2026-03-25T21:15:59.536Z"
+stopped_at: Completed 05-01-PLAN.md
+last_updated: "2026-03-25T21:21:21.984Z"
 progress:
   total_phases: 11
   completed_phases: 4
-  total_plans: 5
+  total_plans: 7
   completed_plans: 5
 ---
 
@@ -19,11 +19,11 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** Every open window lives on one infinite canvas with real interaction
-**Current focus:** Phase 02 — canvas-viewport
+**Current focus:** Phase 05 — canvas-background
 
 ## Current Position
 
-Phase: 02 (canvas-viewport) — EXECUTING
+Phase: 05 (canvas-background) — EXECUTING
 Plan: 2 of 2
 
 ## Performance Metrics
@@ -47,6 +47,7 @@ Plan: 2 of 2
 
 *Updated after each plan completion*
 | Phase 02 P01 | 8min | 2 tasks | 6 files |
+| Phase 05 P01 | 5min | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -59,6 +60,8 @@ Recent decisions affecting current work:
 - Canvas as custom IHyprLayout, not plugin
 - Nested compositor workflow for safe development
 - [Phase 02]: Used defines.hpp for UP<T> in viewport header
+- [Phase 05]: Used glGetUniformLocation for custom shader uniforms
+- [Phase 05]: Y-flip in shader for coordinate system conversion
 
 ### Pending Todos
 
@@ -71,5 +74,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-25T20:53:12.718Z
-Stopped at: Completed 02-01-PLAN.md
+Stopped at: Completed 05-01-PLAN.md
 Resume file: None
