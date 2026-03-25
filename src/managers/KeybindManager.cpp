@@ -8,7 +8,9 @@
 #include "../render/decorations/CHyprGroupBarDecoration.hpp"
 #include "KeybindManager.hpp"
 #include "PointerManager.hpp"
+#include "../canvas/CanvasCommand.hpp"
 #include "../canvas/CanvasTheme.hpp"
+#include "../canvas/CanvasUndoRedo.hpp"
 #include "../canvas/CanvasViewport.hpp"
 #include "../canvas/CanvasQuickJump.hpp"
 #include "../canvas/CanvasAnnotation.hpp"
@@ -158,6 +160,8 @@ CKeybindManager::CKeybindManager() {
     m_dispatchers["canvas:gridsnap"]               = canvasGridSnap;
     m_dispatchers["canvas:drawmode"]               = canvasDrawMode;
     m_dispatchers["canvas:clearannotations"]       = canvasClearAnnotations;
+    m_dispatchers["canvas:undo"]                   = canvasUndo;
+    m_dispatchers["canvas:redo"]                   = canvasRedo;
     m_dispatchers["canvas:tag"]                    = canvasTag;
     m_dispatchers["canvas:view"]                   = canvasView;
 
@@ -3442,6 +3446,13 @@ SDispatchResult CKeybindManager::canvasClearAnnotations(std::string args) {
     if (!g_pCanvasAnnotation)
         return {.success = false, .error = "Canvas annotations not initialized"};
 
+    if (g_pCanvasUndoRedo && (args.empty() || args == "all"))
+        g_pCanvasUndoRedo->push(makeUnique<AnnotationClearCommand>(
+            std::vector<SAnnotationStroke>(g_pCanvasAnnotation->strokes()),
+            std::vector<SAnnotationArrow>(g_pCanvasAnnotation->arrows()),
+            std::vector<SAnnotationStickyNote>(g_pCanvasAnnotation->stickyNotes()),
+            std::vector<SAnnotationText>(g_pCanvasAnnotation->texts())));
+
     if (args.empty() || args == "all")
         g_pCanvasAnnotation->clearAll();
     else
@@ -3452,5 +3463,21 @@ SDispatchResult CKeybindManager::canvasClearAnnotations(std::string args) {
     if (g_pCanvasViewport)
         g_pCanvasViewport->damageAllMonitors();
 
+    return {};
+}
+
+SDispatchResult CKeybindManager::canvasUndo(std::string) {
+    if (!g_pCanvasUndoRedo)
+        return {.success = false, .error = "Undo/redo not initialized"};
+
+    g_pCanvasUndoRedo->undo();
+    return {};
+}
+
+SDispatchResult CKeybindManager::canvasRedo(std::string) {
+    if (!g_pCanvasUndoRedo)
+        return {.success = false, .error = "Undo/redo not initialized"};
+
+    g_pCanvasUndoRedo->redo();
     return {};
 }

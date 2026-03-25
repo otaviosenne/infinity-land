@@ -1,4 +1,6 @@
 #include "CanvasDrawMode.hpp"
+#include "CanvasCommand.hpp"
+#include "CanvasUndoRedo.hpp"
 #include "CanvasViewport.hpp"
 #include "CanvasAnnotation.hpp"
 
@@ -53,6 +55,10 @@ void CCanvasDrawMode::submitText(const std::string& text) {
         note.text     = text;
         note.color    = CHyprColor(1.0, 0.95, 0.6, 1.0);
         g_pCanvasAnnotation->addStickyNote(std::move(note));
+        const auto noteId = g_pCanvasAnnotation->stickyNotes().back().id;
+        auto       savedN = g_pCanvasAnnotation->stickyNotes().back();
+        if (g_pCanvasUndoRedo)
+            g_pCanvasUndoRedo->push(makeUnique<AnnotationAddCommand>("sticky", noteId, std::move(savedN)));
     } else if (m_tool == DRAW_TEXT) {
         SAnnotationText t;
         t.position = m_pendingPosition;
@@ -60,6 +66,10 @@ void CCanvasDrawMode::submitText(const std::string& text) {
         t.color    = m_color;
         t.fontSize = 16.0f;
         g_pCanvasAnnotation->addText(std::move(t));
+        const auto textId = g_pCanvasAnnotation->texts().back().id;
+        auto       savedT = g_pCanvasAnnotation->texts().back();
+        if (g_pCanvasUndoRedo)
+            g_pCanvasUndoRedo->push(makeUnique<AnnotationAddCommand>("text", textId, std::move(savedT)));
     }
 
     g_pCanvasAnnotation->markDirty();
@@ -112,6 +122,10 @@ bool CCanvasDrawMode::handleMouseButton(const Vector2D& screenPos, bool pressed)
         } else if (m_drawing) {
             if (m_currentStroke.points.size() >= 2) {
                 g_pCanvasAnnotation->addStroke(m_currentStroke);
+                const auto addedId = g_pCanvasAnnotation->strokes().back().id;
+                auto       stored  = g_pCanvasAnnotation->strokes().back();
+                if (g_pCanvasUndoRedo)
+                    g_pCanvasUndoRedo->push(makeUnique<AnnotationAddCommand>("stroke", addedId, std::move(stored)));
                 g_pCanvasAnnotation->markDirty();
                 g_pCanvasViewport->damageAllMonitors();
             }
@@ -120,6 +134,9 @@ bool CCanvasDrawMode::handleMouseButton(const Vector2D& screenPos, bool pressed)
     } else if (m_tool == DRAW_ERASER && pressed) {
         auto* stroke = g_pCanvasAnnotation->findNearestStroke(canvasPos);
         if (stroke) {
+            auto saved = *stroke;
+            if (g_pCanvasUndoRedo)
+                g_pCanvasUndoRedo->push(makeUnique<AnnotationRemoveCommand>("stroke", saved.id, std::move(saved)));
             g_pCanvasAnnotation->removeStroke(stroke->id);
             g_pCanvasAnnotation->markDirty();
             g_pCanvasViewport->damageAllMonitors();
@@ -128,6 +145,9 @@ bool CCanvasDrawMode::handleMouseButton(const Vector2D& screenPos, bool pressed)
 
         auto* arrow = g_pCanvasAnnotation->findNearestArrow(canvasPos);
         if (arrow) {
+            auto saved = *arrow;
+            if (g_pCanvasUndoRedo)
+                g_pCanvasUndoRedo->push(makeUnique<AnnotationRemoveCommand>("arrow", saved.id, std::move(saved)));
             g_pCanvasAnnotation->removeArrow(arrow->id);
             g_pCanvasAnnotation->markDirty();
             g_pCanvasViewport->damageAllMonitors();
@@ -136,6 +156,9 @@ bool CCanvasDrawMode::handleMouseButton(const Vector2D& screenPos, bool pressed)
 
         auto* note = g_pCanvasAnnotation->findStickyNoteAt(canvasPos);
         if (note) {
+            auto saved = *note;
+            if (g_pCanvasUndoRedo)
+                g_pCanvasUndoRedo->push(makeUnique<AnnotationRemoveCommand>("sticky", saved.id, std::move(saved)));
             g_pCanvasAnnotation->removeStickyNote(note->id);
             g_pCanvasAnnotation->markDirty();
             g_pCanvasViewport->damageAllMonitors();
@@ -144,6 +167,9 @@ bool CCanvasDrawMode::handleMouseButton(const Vector2D& screenPos, bool pressed)
 
         auto* text = g_pCanvasAnnotation->findTextAt(canvasPos);
         if (text) {
+            auto saved = *text;
+            if (g_pCanvasUndoRedo)
+                g_pCanvasUndoRedo->push(makeUnique<AnnotationRemoveCommand>("text", saved.id, std::move(saved)));
             g_pCanvasAnnotation->removeText(text->id);
             g_pCanvasAnnotation->markDirty();
             g_pCanvasViewport->damageAllMonitors();
@@ -159,6 +185,10 @@ bool CCanvasDrawMode::handleMouseButton(const Vector2D& screenPos, bool pressed)
             m_currentArrow.color     = m_color;
             m_currentArrow.thickness = m_thickness;
             g_pCanvasAnnotation->addArrow(m_currentArrow);
+            const auto arrowId = g_pCanvasAnnotation->arrows().back().id;
+            auto       savedAr = g_pCanvasAnnotation->arrows().back();
+            if (g_pCanvasUndoRedo)
+                g_pCanvasUndoRedo->push(makeUnique<AnnotationAddCommand>("arrow", arrowId, std::move(savedAr)));
             g_pCanvasAnnotation->markDirty();
             g_pCanvasViewport->damageAllMonitors();
             m_drawing = false;

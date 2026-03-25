@@ -1,7 +1,9 @@
 #include "CanvasLayout.hpp"
 #include "CanvasSnap.hpp"
+#include "../canvas/CanvasCommand.hpp"
 #include "../canvas/CanvasPersistence.hpp"
 #include "../canvas/CanvasTags.hpp"
+#include "../canvas/CanvasUndoRedo.hpp"
 #include "../canvas/CanvasViews.hpp"
 #include "../canvas/CanvasViewport.hpp"
 #include "../Compositor.hpp"
@@ -16,6 +18,7 @@ void CCanvasLayout::onEnable() {
     g_pCanvasViews       = makeUnique<CCanvasViews>();
     g_pCanvasPersistence = makeUnique<CCanvasPersistence>();
     g_pCanvasPersistence->load();
+    g_pCanvasUndoRedo = makeUnique<CCanvasUndoRedo>();
 }
 
 void CCanvasLayout::onDisable() {
@@ -160,6 +163,8 @@ void CCanvasLayout::onBeginDragWindow() {
                           g_pInputManager->m_dragMode == MBIND_RESIZE_FORCE_RATIO ||
                           g_pInputManager->m_dragMode == MBIND_RESIZE_BLOCK_RATIO;
 
+    m_dragIsResize = isResize;
+
     if (isResize) {
         static const std::array<std::string, 4> CURSOR_NAMES = {"nw-resize", "ne-resize", "sw-resize", "se-resize"};
         static const std::array<eRectCorner, 4> CORNERS      = {CORNER_TOPLEFT, CORNER_TOPRIGHT, CORNER_BOTTOMLEFT, CORNER_BOTTOMRIGHT};
@@ -199,6 +204,19 @@ void CCanvasLayout::onEndDragWindow() {
             g_pCanvasPersistence->trackWindow(DRAGGINGWINDOW->m_initialClass, resolved, DRAGGINGWINDOW->m_size);
             g_pCanvasPersistence->scheduleSave();
             g_pCanvasViewport->damageAllMonitors();
+        }
+
+        if (g_pCanvasUndoRedo) {
+            const auto finalPos  = DRAGGINGWINDOW->m_position;
+            const auto finalSize = DRAGGINGWINDOW->m_size;
+
+            if (m_dragIsResize) {
+                if (finalPos != m_canvasDragStartPos || finalSize != m_canvasDragStartSize)
+                    g_pCanvasUndoRedo->push(makeUnique<WindowResizeCommand>(DRAGGINGWINDOW, m_canvasDragStartPos, m_canvasDragStartSize, finalPos, finalSize));
+            } else {
+                if (finalPos != m_canvasDragStartPos)
+                    g_pCanvasUndoRedo->push(makeUnique<WindowMoveCommand>(DRAGGINGWINDOW, m_canvasDragStartPos, finalPos));
+            }
         }
     }
     g_pInputManager->unsetCursorImage();

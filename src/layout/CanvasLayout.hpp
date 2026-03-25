@@ -34,7 +34,8 @@ class CCanvasLayout : public IHyprLayout {
     Vector2D    m_canvasDragStartPos;
     Vector2D    m_canvasDragStartSize;
     Vector2D    m_dragStartMousePos;
-    eRectCorner m_dragCorner = CORNER_TOPLEFT;
+    eRectCorner m_dragCorner    = CORNER_TOPLEFT;
+    bool        m_dragIsResize = false;
 
     eRectCorner determineDragCorner(const Vector2D& mousePos, const CBox& windowBox) const;
 
