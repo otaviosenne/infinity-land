@@ -17,7 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 3: Canvas Layout** - Live windows render on canvas with drag and resize
 - [ ] **Phase 4: Layer-Shell Compatibility** - Waybar, wofi, SwayNC, and keybindings work normally
 - [x] **Phase 5: Canvas Background** - Dot grid, cursor glow, and theme toggle
-- [ ] **Phase 6: Persistence** - Window positions, sizes, and per-app defaults survive restarts
+- [x] **Phase 6: Persistence** - Window positions, sizes, and per-app defaults survive restarts (completed 2026-03-25)
 - [ ] **Phase 7: Navigation** - Minimap, quick jump, and zoom-to-fit
 - [ ] **Phase 8: Window Organization** - Anti-overlap snap, grid snap, color tags, workspace views
 - [ ] **Phase 9: Annotation Foundation** - Drawing mode with toolbar, freehand brush, and eraser
@@ -199,7 +199,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 3. Canvas Layout | 0/1 | Not started | - |
 | 4. Layer-Shell Compatibility | 0/1 | Not started | - |
 | 5. Canvas Background | 0/2 | Not started | - |
-| 6. Persistence | 0/1 | Not started | - |
+| 6. Persistence | 1/1 | Complete   | 2026-03-25 |
 | 7. Navigation | 0/? | Not started | - |
 | 8. Window Organization | 0/? | Not started | - |
 | 9. Annotation Foundation | 0/? | Not started | - |

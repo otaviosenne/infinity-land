@@ -12,7 +12,7 @@
 - [x] **CANV-03**: Canvas displays a dot grid background at all zoom levels
 - [x] **CANV-04**: Dot grid glows near the cursor with radial gradient animation
 - [x] **CANV-05**: Canvas spans both monitors (DP-1 + HDMI-A-1) as one continuous surface
-- [ ] **CANV-06**: Window positions and sizes persist across compositor restarts
+- [x] **CANV-06**: Window positions and sizes persist across compositor restarts
 - [x] **CANV-07**: Grid dots adapt spacing at low zoom levels to avoid visual clutter
 
 ### Window Management
@@ -22,7 +22,7 @@
 - [ ] **WNDW-03**: Windows cannot overlap when dropped — snap to nearest free position
 - [ ] **WNDW-04**: New windows appear at center of current viewport
 - [ ] **WNDW-05**: Default window size is 1200x800
-- [ ] **WNDW-06**: Window remembers its last size per app class across restarts
+- [x] **WNDW-06**: Window remembers its last size per app class across restarts
 - [ ] **WNDW-07**: User can maximize a window via zoom-to-fit (canvas zooms until window fills screen)
 - [ ] **WNDW-08**: User can snap selected windows into grid layout via keybind
 - [ ] **WNDW-09**: User can assign color tags to windows for visual organization
@@ -91,14 +91,14 @@
 | CANV-03 | Phase 5 | Complete |
 | CANV-04 | Phase 5 | Complete |
 | CANV-05 | Phase 2 | Complete |
-| CANV-06 | Phase 6 | Pending |
+| CANV-06 | Phase 6 | Complete |
 | CANV-07 | Phase 5 | Complete |
 | WNDW-01 | Phase 3 | Pending |
 | WNDW-02 | Phase 3 | Pending |
 | WNDW-03 | Phase 8 | Pending |
 | WNDW-04 | Phase 3 | Pending |
 | WNDW-05 | Phase 3 | Pending |
-| WNDW-06 | Phase 6 | Pending |
+| WNDW-06 | Phase 6 | Complete |
 | WNDW-07 | Phase 7 | Pending |
 | WNDW-08 | Phase 8 | Pending |
 | WNDW-09 | Phase 8 | Pending |
