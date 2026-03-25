@@ -166,6 +166,20 @@ void CCanvasAnnotation::clearByType(const std::string& type) {
         g_pCanvasPersistence->scheduleSave();
 }
 
+static bool isInVisibleBounds(const Vector2D& point, const CBox& visibleCanvas, double margin) {
+    return point.x >= visibleCanvas.x - margin &&
+           point.x <= visibleCanvas.x + visibleCanvas.w + margin &&
+           point.y >= visibleCanvas.y - margin &&
+           point.y <= visibleCanvas.y + visibleCanvas.h + margin;
+}
+
+static bool isBoxInVisibleBounds(const CBox& box, const CBox& visibleCanvas) {
+    return !(box.x + box.w < visibleCanvas.x ||
+             box.x > visibleCanvas.x + visibleCanvas.w ||
+             box.y + box.h < visibleCanvas.y ||
+             box.y > visibleCanvas.y + visibleCanvas.h);
+}
+
 static void renderArrowhead(cairo_t* cr, const Vector2D& from, const Vector2D& to, double scale) {
     const Vector2D dir   = to - from;
     const double   len   = std::sqrt(dir.x * dir.x + dir.y * dir.y);
@@ -238,8 +252,25 @@ void CCanvasAnnotation::render(PHLMONITOR pMonitor, const CRegion& damage) {
     const auto monPos = pMonitor->m_position;
     const double scale = g_pCanvasViewport->scale();
 
+    const auto topLeft     = g_pCanvasViewport->screenToCanvas(monPos);
+    const auto bottomRight = g_pCanvasViewport->screenToCanvas(Vector2D{monPos.x + monitorW, monPos.y + monitorH});
+    const CBox visibleCanvas = {topLeft.x, topLeft.y, bottomRight.x - topLeft.x, bottomRight.y - topLeft.y};
+
     for (const auto& stroke : m_strokes) {
         if (stroke.points.size() < 2)
+            continue;
+
+        double minX = stroke.points[0].x, maxX = minX;
+        double minY = stroke.points[0].y, maxY = minY;
+        for (const auto& p : stroke.points) {
+            minX = std::min(minX, p.x);
+            maxX = std::max(maxX, p.x);
+            minY = std::min(minY, p.y);
+            maxY = std::max(maxY, p.y);
+        }
+        const double thicknessMargin = stroke.thickness;
+        const CBox strokeBounds = {minX - thicknessMargin, minY - thicknessMargin, maxX - minX + thicknessMargin * 2, maxY - minY + thicknessMargin * 2};
+        if (!isBoxInVisibleBounds(strokeBounds, visibleCanvas))
             continue;
 
         cairo_set_source_rgba(cr, stroke.color.r, stroke.color.g, stroke.color.b, stroke.color.a);
@@ -265,6 +296,11 @@ void CCanvasAnnotation::render(PHLMONITOR pMonitor, const CRegion& damage) {
     }
 
     for (const auto& arrow : m_arrows) {
+        const double arrowMargin = arrow.thickness + 12.0;
+        if (!isInVisibleBounds(arrow.start, visibleCanvas, arrowMargin) &&
+            !isInVisibleBounds(arrow.end, visibleCanvas, arrowMargin))
+            continue;
+
         const auto screenStart = g_pCanvasViewport->canvasToScreen(arrow.start);
         const auto screenEnd   = g_pCanvasViewport->canvasToScreen(arrow.end);
         const double sx1 = screenStart.x - monPos.x;
@@ -283,6 +319,10 @@ void CCanvasAnnotation::render(PHLMONITOR pMonitor, const CRegion& damage) {
     }
 
     for (const auto& note : m_stickyNotes) {
+        const CBox noteBox = {note.position.x, note.position.y, note.size.x, note.size.y};
+        if (!isBoxInVisibleBounds(noteBox, visibleCanvas))
+            continue;
+
         const auto screenPos = g_pCanvasViewport->canvasToScreen(note.position);
         const double sx   = screenPos.x - monPos.x;
         const double sy   = screenPos.y - monPos.y;
@@ -309,6 +349,10 @@ void CCanvasAnnotation::render(PHLMONITOR pMonitor, const CRegion& damage) {
     }
 
     for (const auto& t : m_texts) {
+        const double textMargin = t.fontSize * 20.0;
+        if (!isInVisibleBounds(t.position, visibleCanvas, textMargin))
+            continue;
+
         const auto screenPos = g_pCanvasViewport->canvasToScreen(t.position);
         const double sx = screenPos.x - monPos.x;
         const double sy = screenPos.y - monPos.y;

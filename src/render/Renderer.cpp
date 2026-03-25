@@ -470,6 +470,13 @@ void CHyprRenderer::renderWorkspaceWindows(PHLMONITOR pMonitor, PHLWORKSPACE pWo
     }
 }
 
+static bool isBoxVisible(const CBox& screenBox, const CBox& monitorBox) {
+    return !(screenBox.x + screenBox.w < monitorBox.x ||
+             screenBox.x > monitorBox.x + monitorBox.w ||
+             screenBox.y + screenBox.h < monitorBox.y ||
+             screenBox.y > monitorBox.y + monitorBox.h);
+}
+
 void CHyprRenderer::renderWindow(PHLWINDOW pWindow, PHLMONITOR pMonitor, const Time::steady_tp& time, bool decorate, eRenderPassMode mode, bool ignorePosition, bool standalone) {
     if (pWindow->isHidden() && !standalone)
         return;
@@ -494,6 +501,12 @@ void CHyprRenderer::renderWindow(PHLWINDOW pWindow, PHLMONITOR pMonitor, const T
 
     if (g_pCanvasViewport && !pWindow->m_pinned) {
         textureBox = g_pCanvasViewport->canvasToScreen(textureBox);
+
+        if (!standalone && !ignorePosition) {
+            const CBox monitorBox = {pMonitor->m_position.x, pMonitor->m_position.y, (double)pMonitor->m_pixelSize.x, (double)pMonitor->m_pixelSize.y};
+            if (!isBoxVisible(textureBox, monitorBox))
+                return;
+        }
     }
 
     renderdata.pos.x = textureBox.x;
