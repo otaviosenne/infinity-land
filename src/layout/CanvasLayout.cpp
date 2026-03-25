@@ -1,4 +1,5 @@
 #include "CanvasLayout.hpp"
+#include "../canvas/CanvasPersistence.hpp"
 #include "../canvas/CanvasViewport.hpp"
 #include "../Compositor.hpp"
 #include "../helpers/Monitor.hpp"
@@ -8,29 +9,48 @@
 #include "../managers/KeybindManager.hpp"
 
 void CCanvasLayout::onEnable() {
-    //
+    g_pCanvasPersistence = makeUnique<CCanvasPersistence>();
+    g_pCanvasPersistence->load();
 }
 
 void CCanvasLayout::onDisable() {
+    if (g_pCanvasPersistence)
+        g_pCanvasPersistence->scheduleSave();
     m_windows.clear();
 }
 
 void CCanvasLayout::onWindowCreatedTiling(PHLWINDOW pWindow, eDirection) {
-    const auto PMONITOR = g_pCompositor->getMonitorFromID(pWindow->monitorID());
+    const auto appClass = pWindow->m_initialClass;
+    const auto saved    = g_pCanvasPersistence->findByClass(appClass);
 
-    const auto screenCenter = PMONITOR->m_position + PMONITOR->m_size / 2.0;
-    const auto canvasCenter = g_pCanvasViewport->screenToCanvas(screenCenter);
-    const auto halfSize     = Vector2D{DEFAULT_WIDTH / 2.0, DEFAULT_HEIGHT / 2.0};
+    Vector2D pos, size;
 
-    pWindow->m_position      = canvasCenter - halfSize;
-    *pWindow->m_realPosition = canvasCenter - halfSize;
-    pWindow->m_size          = Vector2D{DEFAULT_WIDTH, DEFAULT_HEIGHT};
-    *pWindow->m_realSize     = Vector2D{DEFAULT_WIDTH, DEFAULT_HEIGHT};
+    if (saved.has_value()) {
+        pos  = saved->position;
+        size = saved->size;
+    } else {
+        const auto PMONITOR     = g_pCompositor->getMonitorFromID(pWindow->monitorID());
+        const auto screenCenter = PMONITOR->m_position + PMONITOR->m_size / 2.0;
+        const auto canvasCenter = g_pCanvasViewport->screenToCanvas(screenCenter);
+        const auto appDefault   = g_pCanvasPersistence->getAppDefault(appClass);
+        size = appDefault.size;
+        pos  = canvasCenter - size / 2.0;
+    }
+
+    pWindow->m_position      = pos;
+    *pWindow->m_realPosition = pos;
+    pWindow->m_size          = size;
+    *pWindow->m_realSize     = size;
 
     m_windows.push_back(pWindow);
+
+    g_pCanvasPersistence->trackWindow(appClass, pos, size);
+    g_pCanvasPersistence->scheduleSave();
 }
 
 void CCanvasLayout::onWindowRemovedTiling(PHLWINDOW pWindow) {
+    g_pCanvasPersistence->trackWindow(pWindow->m_initialClass, pWindow->m_position, pWindow->m_size);
+    g_pCanvasPersistence->scheduleSave();
     std::erase_if(m_windows, [&](const auto& ref) { return ref.lock() == pWindow; });
 }
 
@@ -56,6 +76,9 @@ void CCanvasLayout::resizeActiveWindow(const Vector2D& delta, eRectCorner, PHLWI
     pWindow->m_realSize->setValueAndWarp(newSize);
     pWindow->sendWindowSize();
     g_pCanvasViewport->damageAllMonitors();
+
+    g_pCanvasPersistence->trackWindow(pWindow->m_initialClass, pWindow->m_position, pWindow->m_size);
+    g_pCanvasPersistence->scheduleSave();
 }
 
 void CCanvasLayout::fullscreenRequestForWindow(PHLWINDOW, eFullscreenMode, eFullscreenMode) {
@@ -151,6 +174,11 @@ void CCanvasLayout::onBeginDragWindow() {
 }
 
 void CCanvasLayout::onEndDragWindow() {
+    const auto DRAGGINGWINDOW = g_pInputManager->m_currentlyDraggedWindow.lock();
+    if (DRAGGINGWINDOW) {
+        g_pCanvasPersistence->trackWindow(DRAGGINGWINDOW->m_initialClass, DRAGGINGWINDOW->m_position, DRAGGINGWINDOW->m_size);
+        g_pCanvasPersistence->scheduleSave();
+    }
     g_pInputManager->unsetCursorImage();
     g_pInputManager->m_currentlyDraggedWindow.reset();
     g_pInputManager->m_wasDraggingWindow = true;
