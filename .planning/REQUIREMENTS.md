@@ -53,7 +53,7 @@
 - [x] **SYST-03**: Workspace views filter which windows are visible on the canvas
 - [ ] **SYST-04**: Waybar, wofi, SwayNC, and layer-shell apps work normally (excluded from canvas transform)
 - [ ] **SYST-05**: All existing Hyprland keybindings and window rules still function
-- [ ] **SYST-06**: Smooth zoom animations at 60fps with 15+ windows on AMD RX 590
+- [x] **SYST-06**: Smooth zoom animations at 60fps with 15+ windows on AMD RX 590
 
 ## v2 Requirements
 
@@ -120,7 +120,7 @@
 | SYST-03 | Phase 8 | Complete |
 | SYST-04 | Phase 4 | Pending |
 | SYST-05 | Phase 4 | Pending |
-| SYST-06 | Phase 11 | Pending |
+| SYST-06 | Phase 11 | Complete |
 
 **Coverage:**
 - v1 requirements: 35 total
