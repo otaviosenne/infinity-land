@@ -10,6 +10,7 @@
 #include "PointerManager.hpp"
 #include "../canvas/CanvasTheme.hpp"
 #include "../canvas/CanvasViewport.hpp"
+#include "../canvas/CanvasQuickJump.hpp"
 #include "Compositor.hpp"
 #include "TokenManager.hpp"
 #include "eventLoop/EventLoopManager.hpp"
@@ -146,6 +147,7 @@ CKeybindManager::CKeybindManager() {
     m_dispatchers["setprop"]                        = setProp;
     m_dispatchers["canvas:toggletheme"]             = canvasToggleTheme;
     m_dispatchers["canvas:zoomtofit"]               = canvasZoomToFit;
+    m_dispatchers["canvas:quickjump"]              = canvasQuickJump;
 
     m_scrollTimer.reset();
 
@@ -3326,5 +3328,13 @@ SDispatchResult CKeybindManager::canvasZoomToFit(std::string args) {
         return {.success = false, .error = "No focused window"};
 
     g_pCanvasViewport->zoomToFit(CBox{PWINDOW->m_realPosition->goal(), PWINDOW->m_realSize->goal()});
+    return {};
+}
+
+SDispatchResult CKeybindManager::canvasQuickJump(std::string args) {
+    if (!g_pCanvasQuickJump)
+        return {.success = false, .error = "Quick jump not initialized"};
+
+    g_pCanvasQuickJump->toggle();
     return {};
 }

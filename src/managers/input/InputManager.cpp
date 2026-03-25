@@ -32,6 +32,7 @@
 
 #include "../../managers/PointerManager.hpp"
 #include "../../managers/SeatManager.hpp"
+#include "../../canvas/CanvasQuickJump.hpp"
 #include "../../managers/KeybindManager.hpp"
 #include "../../render/Renderer.hpp"
 #include "../../managers/HookSystemManager.hpp"
@@ -1472,6 +1473,15 @@ void CInputManager::onKeyboardKey(const IKeyboard::SKeyEvent& event, SP<IKeyboar
     EMIT_HOOK_EVENT_CANCELLABLE("keyPress", EMAP);
 
     bool passEvent = DISALLOWACTION;
+
+    if (g_pCanvasQuickJump && g_pCanvasQuickJump->isActive() && !DISALLOWACTION) {
+        const bool    pressed   = (event.state == WL_KEYBOARD_KEY_STATE_PRESSED);
+        const auto    xkbCode   = event.keycode + 8;
+        const auto    keysym    = xkb_state_key_get_one_sym(pKeyboard->m_xkbState, xkbCode);
+        const char32_t character = xkb_keysym_to_utf32(keysym);
+        if (g_pCanvasQuickJump->handleKey(event.keycode, pressed, character))
+            return;
+    }
 
     if (!DISALLOWACTION)
         passEvent = g_pKeybindManager->onKeyEvent(event, pKeyboard);
