@@ -168,8 +168,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 10-01: TBD
-- [ ] 10-02: TBD
+- [ ] 10-01-PLAN.md — Arrow, sticky note, and text annotation tools
+- [ ] 10-02-PLAN.md — Annotation persistence and clear dispatcher
 
 ### Phase 11: Undo/Redo and Performance
 **Goal**: All canvas actions are undoable and the compositor runs at 60fps with 15+ windows
@@ -203,5 +203,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 7. Navigation | 1/2 | In progress | - |
 | 8. Window Organization | 0/2 | Not started | - |
 | 9. Annotation Foundation | 1/2 | In Progress|  |
-| 10. Annotation Extended | 0/? | Not started | - |
+| 10. Annotation Extended | 0/2 | Not started | - |
 | 11. Undo/Redo and Performance | 0/? | Not started | - |
