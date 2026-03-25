@@ -52,6 +52,8 @@
 #include "canvas/CanvasTheme.hpp"
 #include "canvas/CanvasMinimap.hpp"
 #include "canvas/CanvasQuickJump.hpp"
+#include "canvas/CanvasAnnotation.hpp"
+#include "canvas/CanvasDrawMode.hpp"
 #include "managers/SessionLockManager.hpp"
 #include "managers/XWaylandManager.hpp"
 
@@ -661,6 +663,12 @@ void CCompositor::initManagers(eManagersInitStage stage) {
 
             Debug::log(LOG, "Creating the CanvasQuickJump!");
             g_pCanvasQuickJump = makeUnique<CCanvasQuickJump>();
+
+            Debug::log(LOG, "Creating the CanvasAnnotation!");
+            g_pCanvasAnnotation = makeUnique<CCanvasAnnotation>();
+
+            Debug::log(LOG, "Creating the CanvasDrawMode!");
+            g_pCanvasDrawMode = makeUnique<CCanvasDrawMode>();
 
             Debug::log(LOG, "Creating the LayoutManager!");
             g_pLayoutManager = makeUnique<CLayoutManager>();

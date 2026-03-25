@@ -235,6 +235,7 @@ class CKeybindManager {
     static SDispatchResult canvasGridSnap(std::string);
     static SDispatchResult canvasTag(std::string);
     static SDispatchResult canvasView(std::string);
+    static SDispatchResult canvasDrawMode(std::string);
 
     friend class CCompositor;
     friend class CInputManager;

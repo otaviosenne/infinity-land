@@ -40,6 +40,7 @@
 #include "../../managers/LayoutManager.hpp"
 #include "../../managers/permissions/DynamicPermissionManager.hpp"
 #include "../../canvas/CanvasViewport.hpp"
+#include "../../canvas/CanvasDrawMode.hpp"
 
 #include "../../helpers/time/Time.hpp"
 #include "../../helpers/MiscFunctions.hpp"
@@ -183,6 +184,9 @@ void CInputManager::mouseMoveUnified(uint32_t time, bool refocus, bool mouse, st
         m_canvasPanLastPos = currentPos;
         return;
     }
+
+    if (g_pCanvasDrawMode && g_pCanvasDrawMode->isActive() && g_pCanvasDrawMode->handleMouseMove(g_pPointerManager->position()))
+        return;
 
     if (!g_pCompositor->m_readyToProcess || g_pCompositor->m_isShuttingDown || g_pCompositor->m_unsafeState)
         return;
@@ -636,6 +640,12 @@ void CInputManager::onMouseButton(IPointer::SButtonEvent e) {
             m_canvasPanning = false;
             return;
         }
+    }
+
+    if (g_pCanvasDrawMode && g_pCanvasDrawMode->isActive() && (e.button == BTN_LEFT)) {
+        const auto pos = g_pPointerManager->position();
+        g_pCanvasDrawMode->handleMouseButton(pos, e.state == WL_POINTER_BUTTON_STATE_PRESSED);
+        return;
     }
 
     if (e.mouse)

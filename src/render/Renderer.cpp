@@ -25,6 +25,8 @@
 #include "../helpers/sync/SyncTimeline.hpp"
 #include "../hyprerror/HyprError.hpp"
 #include "../canvas/CanvasBackground.hpp"
+#include "../canvas/CanvasAnnotation.hpp"
+#include "../canvas/CanvasDrawMode.hpp"
 #include "../debug/HyprDebugOverlay.hpp"
 #include "../debug/HyprNotificationOverlay.hpp"
 #include "helpers/Monitor.hpp"
@@ -924,6 +926,9 @@ void CHyprRenderer::renderAllClientsForWorkspace(PHLMONITOR pMonitor, PHLWORKSPA
         if (g_pCanvasBackground)
             g_pCanvasBackground->render(pMonitor, g_pHyprOpenGL->m_renderData.damage);
 
+        if (g_pCanvasAnnotation)
+            g_pCanvasAnnotation->render(pMonitor, g_pHyprOpenGL->m_renderData.damage);
+
         for (auto const& ls : pMonitor->m_layerSurfaceLayers[ZWLR_LAYER_SHELL_V1_LAYER_BACKGROUND]) {
             renderLayer(ls.lock(), pMonitor, time);
         }
@@ -959,6 +964,9 @@ void CHyprRenderer::renderAllClientsForWorkspace(PHLMONITOR pMonitor, PHLWORKSPA
 
         if (g_pCanvasBackground)
             g_pCanvasBackground->render(pMonitor, g_pHyprOpenGL->m_renderData.damage);
+
+        if (g_pCanvasAnnotation)
+            g_pCanvasAnnotation->render(pMonitor, g_pHyprOpenGL->m_renderData.damage);
 
         for (auto const& ls : pMonitor->m_layerSurfaceLayers[ZWLR_LAYER_SHELL_V1_LAYER_BACKGROUND]) {
             renderLayer(ls.lock(), pMonitor, time);

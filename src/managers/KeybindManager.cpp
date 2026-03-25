@@ -11,6 +11,7 @@
 #include "../canvas/CanvasTheme.hpp"
 #include "../canvas/CanvasViewport.hpp"
 #include "../canvas/CanvasQuickJump.hpp"
+#include "../canvas/CanvasDrawMode.hpp"
 #include "../layout/CanvasSnap.hpp"
 #include "../layout/CanvasLayout.hpp"
 #include "../canvas/CanvasPersistence.hpp"
@@ -154,6 +155,7 @@ CKeybindManager::CKeybindManager() {
     m_dispatchers["canvas:zoomtofit"]               = canvasZoomToFit;
     m_dispatchers["canvas:quickjump"]              = canvasQuickJump;
     m_dispatchers["canvas:gridsnap"]               = canvasGridSnap;
+    m_dispatchers["canvas:drawmode"]               = canvasDrawMode;
     m_dispatchers["canvas:tag"]                    = canvasTag;
     m_dispatchers["canvas:view"]                   = canvasView;
 
@@ -3419,5 +3421,17 @@ SDispatchResult CKeybindManager::canvasView(std::string args) {
     }
 
     g_pCanvasPersistence->scheduleSave();
+    return {};
+}
+
+SDispatchResult CKeybindManager::canvasDrawMode(std::string args) {
+    if (!g_pCanvasDrawMode)
+        return {.success = false, .error = "Canvas draw mode not initialized"};
+
+    g_pCanvasDrawMode->toggle();
+
+    if (g_pCanvasViewport)
+        g_pCanvasViewport->damageAllMonitors();
+
     return {};
 }
