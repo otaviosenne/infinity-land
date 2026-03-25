@@ -1,4 +1,5 @@
 #include "CanvasBackground.hpp"
+#include "CanvasTheme.hpp"
 #include "CanvasViewport.hpp"
 #include "../render/OpenGL.hpp"
 #include "../managers/PointerManager.hpp"
@@ -38,10 +39,18 @@ void CCanvasBackground::render(PHLMONITOR pMonitor, const CRegion& damage) {
     glUniform1f(glGetUniformLocation(shader.program, "u_gridSpacing"), spacing);
     glUniform1f(glGetUniformLocation(shader.program, "u_dotRadius"), DOT_RADIUS);
 
+    const auto themeColors = g_pCanvasTheme ? g_pCanvasTheme->colors() : SCanvasThemeColors{
+        CHyprColor(0.102f, 0.102f, 0.180f, 1.0f),
+        CHyprColor(0.216f, 0.255f, 0.318f, 1.0f),
+        CHyprColor(0.612f, 0.639f, 0.686f, 1.0f),
+    };
+
     glUniform4f(glGetUniformLocation(shader.program, "u_dotColor"),
-        0.216f, 0.255f, 0.318f, 1.0f);
+        static_cast<float>(themeColors.dotColor.r), static_cast<float>(themeColors.dotColor.g),
+        static_cast<float>(themeColors.dotColor.b), 1.0f);
     glUniform4f(glGetUniformLocation(shader.program, "u_bgColor"),
-        0.102f, 0.102f, 0.180f, 1.0f);
+        static_cast<float>(themeColors.bgColor.r), static_cast<float>(themeColors.bgColor.g),
+        static_cast<float>(themeColors.bgColor.b), 1.0f);
 
     const auto cursorGlobal = g_pPointerManager->position();
     const auto cursorLocal = cursorGlobal - pMonitor->m_position;
@@ -51,7 +60,8 @@ void CCanvasBackground::render(PHLMONITOR pMonitor, const CRegion& damage) {
         static_cast<float>(cursorLocal.x), cursorY);
     glUniform1f(glGetUniformLocation(shader.program, "u_glowRadius"), GLOW_RADIUS);
     glUniform4f(glGetUniformLocation(shader.program, "u_glowDotColor"),
-        0.612f, 0.639f, 0.686f, 1.0f);
+        static_cast<float>(themeColors.glowDotColor.r), static_cast<float>(themeColors.glowDotColor.g),
+        static_cast<float>(themeColors.glowDotColor.b), 1.0f);
     glUniform1f(glGetUniformLocation(shader.program, "u_glowDotRadius"), GLOW_DOT_RADIUS);
 
     glBindVertexArray(shader.uniformLocations[SHADER_SHADER_VAO]);

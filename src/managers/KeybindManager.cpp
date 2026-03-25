@@ -8,6 +8,7 @@
 #include "../render/decorations/CHyprGroupBarDecoration.hpp"
 #include "KeybindManager.hpp"
 #include "PointerManager.hpp"
+#include "../canvas/CanvasTheme.hpp"
 #include "Compositor.hpp"
 #include "TokenManager.hpp"
 #include "eventLoop/EventLoopManager.hpp"
@@ -142,6 +143,7 @@ CKeybindManager::CKeybindManager() {
     m_dispatchers["event"]                          = event;
     m_dispatchers["global"]                         = global;
     m_dispatchers["setprop"]                        = setProp;
+    m_dispatchers["canvas:toggletheme"]             = canvasToggleTheme;
 
     m_scrollTimer.reset();
 
@@ -3303,4 +3305,12 @@ SDispatchResult CKeybindManager::sendkeystate(std::string args) {
     }
 
     return result;
+}
+
+SDispatchResult CKeybindManager::canvasToggleTheme(std::string args) {
+    if (!g_pCanvasTheme)
+        return {.success = false, .error = "Canvas theme not initialized"};
+
+    g_pCanvasTheme->toggle();
+    return {};
 }
