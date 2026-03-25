@@ -15,6 +15,9 @@ constexpr int    SEPARATOR_GAP   = 16;
 enum eButtonType : uint8_t {
     TBTN_BRUSH,
     TBTN_ERASER,
+    TBTN_ARROW,
+    TBTN_STICKY,
+    TBTN_TEXT,
     TBTN_COLOR,
     TBTN_THICKNESS,
 };

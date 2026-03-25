@@ -32,7 +32,7 @@ static void cairoRoundedRect(cairo_t* cr, double x, double y, double w, double h
 void CCanvasToolbar::buildLayout(double monitorX, double monitorY, int monitorW, int monitorH) {
     m_buttons.clear();
 
-    constexpr int TOOL_COUNT      = 2;
+    constexpr int TOOL_COUNT      = 5;
     constexpr int COLOR_COUNT     = 8;
     constexpr int THICKNESS_COUNT = 3;
     constexpr int TOTAL_BUTTONS   = TOOL_COUNT + COLOR_COUNT + THICKNESS_COUNT;
@@ -61,6 +61,9 @@ void CCanvasToolbar::buildLayout(double monitorX, double monitorY, int monitorW,
 
     addButton(TBTN_BRUSH, DRAW_BRUSH, {}, 0);
     addButton(TBTN_ERASER, DRAW_ERASER, {}, 0);
+    addButton(TBTN_ARROW, DRAW_ARROW, {}, 0);
+    addButton(TBTN_STICKY, DRAW_STICKY, {}, 0);
+    addButton(TBTN_TEXT, DRAW_TEXT, {}, 0);
 
     curX += SEPARATOR_GAP - BUTTON_GAP;
 
@@ -84,6 +87,45 @@ static void renderButtonContent(cairo_t* cr, const SToolbarButton& btn, double l
         case TBTN_ERASER:
             cairo_set_source_rgba(cr, 0.5, 0.4, 0.4, 1.0);
             cairo_fill_preserve(cr);
+            break;
+        case TBTN_ARROW:
+            cairo_set_source_rgba(cr, 0.3, 0.3, 0.3, 1.0);
+            cairo_fill_preserve(cr);
+            cairo_new_path(cr);
+            cairo_set_source_rgba(cr, 0.6, 0.6, 0.6, 1.0);
+            cairo_set_line_width(cr, 2.0);
+            cairo_move_to(cr, localX + 8, localY + BUTTON_SIZE - 8);
+            cairo_line_to(cr, localX + BUTTON_SIZE - 8, localY + 8);
+            cairo_stroke(cr);
+            cairo_move_to(cr, localX + BUTTON_SIZE - 8, localY + 8);
+            cairo_line_to(cr, localX + BUTTON_SIZE - 14, localY + 10);
+            cairo_line_to(cr, localX + BUTTON_SIZE - 10, localY + 14);
+            cairo_close_path(cr);
+            cairo_fill(cr);
+            break;
+        case TBTN_STICKY:
+            cairo_set_source_rgba(cr, 0.3, 0.3, 0.3, 1.0);
+            cairo_fill_preserve(cr);
+            cairo_new_path(cr);
+            cairo_set_source_rgba(cr, 0.9, 0.85, 0.4, 1.0);
+            cairo_rectangle(cr, localX + 6, localY + 6, BUTTON_SIZE - 12, BUTTON_SIZE - 12);
+            cairo_fill(cr);
+            cairo_set_source_rgba(cr, 0.7, 0.65, 0.3, 1.0);
+            cairo_move_to(cr, localX + BUTTON_SIZE - 10, localY + 6);
+            cairo_line_to(cr, localX + BUTTON_SIZE - 6, localY + 10);
+            cairo_line_to(cr, localX + BUTTON_SIZE - 10, localY + 10);
+            cairo_close_path(cr);
+            cairo_fill(cr);
+            break;
+        case TBTN_TEXT:
+            cairo_set_source_rgba(cr, 0.3, 0.3, 0.3, 1.0);
+            cairo_fill_preserve(cr);
+            cairo_new_path(cr);
+            cairo_set_source_rgba(cr, 0.6, 0.6, 0.6, 1.0);
+            cairo_select_font_face(cr, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
+            cairo_set_font_size(cr, 18.0);
+            cairo_move_to(cr, localX + 10, localY + 23);
+            cairo_show_text(cr, "T");
             break;
         case TBTN_COLOR:
             cairo_set_source_rgba(cr, btn.color.r, btn.color.g, btn.color.b, btn.color.a);
@@ -145,7 +187,7 @@ void CCanvasToolbar::render(PHLMONITOR pMonitor, const CRegion& damage) {
         const double localY = btn.box.y - m_bounds.y;
 
         bool isActive = false;
-        if (btn.type == TBTN_BRUSH || btn.type == TBTN_ERASER)
+        if (btn.type == TBTN_BRUSH || btn.type == TBTN_ERASER || btn.type == TBTN_ARROW || btn.type == TBTN_STICKY || btn.type == TBTN_TEXT)
             isActive = (activeTool == btn.tool);
         else if (btn.type == TBTN_COLOR)
             isActive = (btn.color.r == activeColor.r && btn.color.g == activeColor.g && btn.color.b == activeColor.b);
@@ -154,7 +196,7 @@ void CCanvasToolbar::render(PHLMONITOR pMonitor, const CRegion& damage) {
 
         renderButtonContent(cr, btn, localX, localY, isActive);
 
-        if ((i == 1 || i == 9) && separatorIndex < 2) {
+        if ((i == 4 || i == 12) && separatorIndex < 2) {
             double sepX = localX + BUTTON_SIZE + (SEPARATOR_GAP + BUTTON_GAP) / 2.0;
             cairo_set_source_rgba(cr, 0.4, 0.4, 0.4, 0.5);
             cairo_set_line_width(cr, 1.0);
@@ -195,7 +237,10 @@ bool CCanvasToolbar::handleClick(const Vector2D& screenPos) {
 
             switch (btn.type) {
                 case TBTN_BRUSH:
-                case TBTN_ERASER: g_pCanvasDrawMode->setTool(btn.tool); break;
+                case TBTN_ERASER:
+                case TBTN_ARROW:
+                case TBTN_STICKY:
+                case TBTN_TEXT: g_pCanvasDrawMode->setTool(btn.tool); break;
                 case TBTN_COLOR: g_pCanvasDrawMode->setColor(btn.color); break;
                 case TBTN_THICKNESS: g_pCanvasDrawMode->setThickness(btn.thickness); break;
             }
