@@ -105,11 +105,10 @@ Plans:
   1. After restart, previously open windows reappear at their saved canvas positions
   2. Window sizes are remembered per app class (e.g., kitty always opens at last-used size)
   3. State is saved to `~/.config/infinity-land/` as human-readable JSON
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 06-01: TBD
-- [ ] 06-02: TBD
+- [ ] 06-01-PLAN.md — Canvas state persistence with nlohmann/json save/load
 
 ### Phase 7: Navigation
 **Goal**: User can orient and jump around the canvas efficiently
@@ -200,7 +199,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 3. Canvas Layout | 0/1 | Not started | - |
 | 4. Layer-Shell Compatibility | 0/1 | Not started | - |
 | 5. Canvas Background | 0/2 | Not started | - |
-| 6. Persistence | 0/? | Not started | - |
+| 6. Persistence | 0/1 | Not started | - |
 | 7. Navigation | 0/? | Not started | - |
 | 8. Window Organization | 0/? | Not started | - |
 | 9. Annotation Foundation | 0/? | Not started | - |
