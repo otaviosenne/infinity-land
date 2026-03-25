@@ -10,7 +10,7 @@
 - [x] **CANV-01**: User can pan the canvas with middle mouse button or space+drag
 - [x] **CANV-02**: User can zoom the canvas with scroll wheel (linear, fast, no easing)
 - [x] **CANV-03**: Canvas displays a dot grid background at all zoom levels
-- [ ] **CANV-04**: Dot grid glows near the cursor with radial gradient animation
+- [x] **CANV-04**: Dot grid glows near the cursor with radial gradient animation
 - [x] **CANV-05**: Canvas spans both monitors (DP-1 + HDMI-A-1) as one continuous surface
 - [ ] **CANV-06**: Window positions and sizes persist across compositor restarts
 - [x] **CANV-07**: Grid dots adapt spacing at low zoom levels to avoid visual clutter
@@ -49,7 +49,7 @@
 ### System
 
 - [ ] **SYST-01**: Full undo/redo stack across all actions (Ctrl+Z / Ctrl+Shift+Z)
-- [ ] **SYST-02**: Dark and light theme with toggle button
+- [x] **SYST-02**: Dark and light theme with toggle button
 - [ ] **SYST-03**: Workspace views filter which windows are visible on the canvas
 - [ ] **SYST-04**: Waybar, wofi, SwayNC, and layer-shell apps work normally (excluded from canvas transform)
 - [ ] **SYST-05**: All existing Hyprland keybindings and window rules still function
@@ -89,7 +89,7 @@
 | CANV-01 | Phase 2 | Complete |
 | CANV-02 | Phase 2 | Complete |
 | CANV-03 | Phase 5 | Complete |
-| CANV-04 | Phase 5 | Pending |
+| CANV-04 | Phase 5 | Complete |
 | CANV-05 | Phase 2 | Complete |
 | CANV-06 | Phase 6 | Pending |
 | CANV-07 | Phase 5 | Complete |
@@ -116,7 +116,7 @@
 | ANOT-08 | Phase 10 | Pending |
 | ANOT-09 | Phase 9 | Pending |
 | SYST-01 | Phase 11 | Pending |
-| SYST-02 | Phase 5 | Pending |
+| SYST-02 | Phase 5 | Complete |
 | SYST-03 | Phase 8 | Pending |
 | SYST-04 | Phase 4 | Pending |
 | SYST-05 | Phase 4 | Pending |

@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 2: Canvas Viewport** - Pan and zoom transform system with coordinate space math
 - [ ] **Phase 3: Canvas Layout** - Live windows render on canvas with drag and resize
 - [ ] **Phase 4: Layer-Shell Compatibility** - Waybar, wofi, SwayNC, and keybindings work normally
-- [ ] **Phase 5: Canvas Background** - Dot grid, cursor glow, and theme toggle
+- [x] **Phase 5: Canvas Background** - Dot grid, cursor glow, and theme toggle
 - [ ] **Phase 6: Persistence** - Window positions, sizes, and per-app defaults survive restarts
 - [ ] **Phase 7: Navigation** - Minimap, quick jump, and zoom-to-fit
 - [ ] **Phase 8: Window Organization** - Anti-overlap snap, grid snap, color tags, workspace views
@@ -94,8 +94,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 05-01-PLAN.md — Dot grid fragment shader and background rendering pipeline
-- [ ] 05-02-PLAN.md — Cursor glow effect and dark/light theme toggle
+- [x] 05-01-PLAN.md — Dot grid fragment shader and background rendering pipeline
+- [x] 05-02-PLAN.md — Cursor glow effect and dark/light theme toggle
 
 ### Phase 6: Persistence
 **Goal**: Canvas state survives compositor restarts
