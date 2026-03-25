@@ -23,15 +23,15 @@
 - [ ] **WNDW-04**: New windows appear at center of current viewport
 - [ ] **WNDW-05**: Default window size is 1200x800
 - [x] **WNDW-06**: Window remembers its last size per app class across restarts
-- [ ] **WNDW-07**: User can maximize a window via zoom-to-fit (canvas zooms until window fills screen)
+- [x] **WNDW-07**: User can maximize a window via zoom-to-fit (canvas zooms until window fills screen)
 - [ ] **WNDW-08**: User can snap selected windows into grid layout via keybind
 - [ ] **WNDW-09**: User can assign color tags to windows for visual organization
 - [ ] **WNDW-10**: All windows render as real interactive Wayland surfaces (not thumbnails)
 
 ### Navigation
 
-- [ ] **NAVG-01**: Minimap in corner shows overview of all windows on canvas
-- [ ] **NAVG-02**: User can click minimap to jump to that area of the canvas
+- [x] **NAVG-01**: Minimap in corner shows overview of all windows on canvas
+- [x] **NAVG-02**: User can click minimap to jump to that area of the canvas
 - [ ] **NAVG-03**: User can search windows by name and jump to them via keybind
 
 ### Annotations
@@ -99,12 +99,12 @@
 | WNDW-04 | Phase 3 | Pending |
 | WNDW-05 | Phase 3 | Pending |
 | WNDW-06 | Phase 6 | Complete |
-| WNDW-07 | Phase 7 | Pending |
+| WNDW-07 | Phase 7 | Complete |
 | WNDW-08 | Phase 8 | Pending |
 | WNDW-09 | Phase 8 | Pending |
 | WNDW-10 | Phase 3 | Pending |
-| NAVG-01 | Phase 7 | Pending |
-| NAVG-02 | Phase 7 | Pending |
+| NAVG-01 | Phase 7 | Complete |
+| NAVG-02 | Phase 7 | Complete |
 | NAVG-03 | Phase 7 | Pending |
 | ANOT-01 | Phase 9 | Pending |
 | ANOT-02 | Phase 9 | Pending |
