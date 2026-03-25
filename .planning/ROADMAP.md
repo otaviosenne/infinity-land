@@ -134,11 +134,11 @@ Plans:
   2. User can press a keybind to arrange selected windows into a grid layout
   3. User can assign color tags to windows and see them visually on the canvas
   4. User can switch workspace views that filter which windows are visible
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 08-01: TBD
-- [ ] 08-02: TBD
+- [ ] 08-01-PLAN.md — Anti-overlap snap on drop and grid snap layout via SUPER+G
+- [ ] 08-02-PLAN.md — Color tags for windows and workspace view filtering
 
 ### Phase 9: Annotation Foundation
 **Goal**: User can draw freehand on the canvas and erase drawings
@@ -201,7 +201,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 5. Canvas Background | 0/2 | Not started | - |
 | 6. Persistence | 1/1 | Complete   | 2026-03-25 |
 | 7. Navigation | 1/2 | In progress | - |
-| 8. Window Organization | 0/? | Not started | - |
+| 8. Window Organization | 0/2 | Not started | - |
 | 9. Annotation Foundation | 0/? | Not started | - |
 | 10. Annotation Extended | 0/? | Not started | - |
 | 11. Undo/Redo and Performance | 0/? | Not started | - |
