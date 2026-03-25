@@ -48,11 +48,11 @@ Plans:
   2. User can zoom in/out with scroll wheel with linear (no easing) animation
   3. Canvas extends seamlessly across DP-1 and HDMI-A-1 as one continuous surface
   4. Coordinate transforms are correct at all zoom levels (clicks hit the right spot)
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 02-01: TBD
-- [ ] 02-02: TBD
+- [ ] 02-01-PLAN.md — CCanvasViewport singleton and CCanvasLayout with LayoutManager registration
+- [ ] 02-02-PLAN.md — Wire transforms into rendering, input, and pan/zoom handlers
 
 ### Phase 3: Canvas Layout
 **Goal**: All windows render as live interactive Wayland surfaces on the canvas
