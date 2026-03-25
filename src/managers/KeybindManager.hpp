@@ -232,6 +232,7 @@ class CKeybindManager {
     static SDispatchResult canvasToggleTheme(std::string);
     static SDispatchResult canvasZoomToFit(std::string);
     static SDispatchResult canvasQuickJump(std::string);
+    static SDispatchResult canvasGridSnap(std::string);
 
     friend class CCompositor;
     friend class CInputManager;

@@ -26,6 +26,8 @@ class CCanvasLayout : public IHyprLayout {
     void                     onMouseMove(const Vector2D&) override;
     void                     moveActiveWindow(const Vector2D&, PHLWINDOW pWindow = nullptr) override;
 
+    const std::vector<PHLWINDOWREF>& windows() const { return m_windows; }
+
   private:
     std::vector<PHLWINDOWREF> m_windows;
 

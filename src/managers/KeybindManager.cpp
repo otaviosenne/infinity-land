@@ -11,6 +11,9 @@
 #include "../canvas/CanvasTheme.hpp"
 #include "../canvas/CanvasViewport.hpp"
 #include "../canvas/CanvasQuickJump.hpp"
+#include "../layout/CanvasSnap.hpp"
+#include "../layout/CanvasLayout.hpp"
+#include "../canvas/CanvasPersistence.hpp"
 #include "Compositor.hpp"
 #include "TokenManager.hpp"
 #include "eventLoop/EventLoopManager.hpp"
@@ -148,6 +151,7 @@ CKeybindManager::CKeybindManager() {
     m_dispatchers["canvas:toggletheme"]             = canvasToggleTheme;
     m_dispatchers["canvas:zoomtofit"]               = canvasZoomToFit;
     m_dispatchers["canvas:quickjump"]              = canvasQuickJump;
+    m_dispatchers["canvas:gridsnap"]               = canvasGridSnap;
 
     m_scrollTimer.reset();
 
@@ -3336,5 +3340,50 @@ SDispatchResult CKeybindManager::canvasQuickJump(std::string args) {
         return {.success = false, .error = "Quick jump not initialized"};
 
     g_pCanvasQuickJump->toggle();
+    return {};
+}
+
+SDispatchResult CKeybindManager::canvasGridSnap(std::string args) {
+    if (!g_pCanvasViewport)
+        return {.success = false, .error = "Canvas viewport not initialized"};
+
+    const auto pLayout = dynamic_cast<CCanvasLayout*>(g_pLayoutManager->getCurrentLayout());
+    if (!pLayout)
+        return {.success = false, .error = "Not using canvas layout"};
+
+    const auto& windowRefs = pLayout->windows();
+    if (windowRefs.empty())
+        return {};
+
+    std::vector<PHLWINDOW> windows;
+    Vector2D               totalSize = {};
+    for (const auto& ref : windowRefs) {
+        const auto w = ref.lock();
+        if (!w)
+            continue;
+        windows.push_back(w);
+        totalSize = totalSize + w->m_size;
+    }
+
+    if (windows.empty())
+        return {};
+
+    const auto avgSize = totalSize / static_cast<double>(windows.size());
+
+    const auto PMONITOR       = g_pCompositor->getMonitorFromID(g_pCompositor->m_lastMonitor->m_id);
+    const auto screenCenter   = PMONITOR->m_position + PMONITOR->m_size / 2.0;
+    const auto viewportCenter = g_pCanvasViewport->screenToCanvas(screenCenter);
+    const auto viewportSize   = PMONITOR->m_size / g_pCanvasViewport->scale();
+
+    const auto positions = computeGridLayout(static_cast<int>(windows.size()), viewportCenter, viewportSize, avgSize);
+
+    for (size_t i = 0; i < windows.size(); ++i) {
+        windows[i]->m_position = positions[i];
+        windows[i]->m_realPosition->setValueAndWarp(positions[i]);
+        g_pCanvasPersistence->trackWindow(windows[i]->m_initialClass, positions[i], windows[i]->m_size);
+    }
+
+    g_pCanvasPersistence->scheduleSave();
+    g_pCanvasViewport->damageAllMonitors();
     return {};
 }
