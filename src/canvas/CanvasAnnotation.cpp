@@ -1,4 +1,5 @@
 #include "CanvasAnnotation.hpp"
+#include "CanvasPersistence.hpp"
 #include "CanvasViewport.hpp"
 #include "../render/OpenGL.hpp"
 
@@ -12,44 +13,60 @@ void CCanvasAnnotation::addStroke(SAnnotationStroke stroke) {
     stroke.id = m_nextId++;
     m_strokes.push_back(std::move(stroke));
     m_dirty = true;
+    if (g_pCanvasPersistence)
+        g_pCanvasPersistence->scheduleSave();
 }
 
 void CCanvasAnnotation::removeStroke(uint64_t id) {
     std::erase_if(m_strokes, [id](const SAnnotationStroke& s) { return s.id == id; });
     m_dirty = true;
+    if (g_pCanvasPersistence)
+        g_pCanvasPersistence->scheduleSave();
 }
 
 void CCanvasAnnotation::addArrow(SAnnotationArrow arrow) {
     arrow.id = m_nextId++;
     m_arrows.push_back(std::move(arrow));
     m_dirty = true;
+    if (g_pCanvasPersistence)
+        g_pCanvasPersistence->scheduleSave();
 }
 
 void CCanvasAnnotation::removeArrow(uint64_t id) {
     std::erase_if(m_arrows, [id](const SAnnotationArrow& a) { return a.id == id; });
     m_dirty = true;
+    if (g_pCanvasPersistence)
+        g_pCanvasPersistence->scheduleSave();
 }
 
 void CCanvasAnnotation::addStickyNote(SAnnotationStickyNote note) {
     note.id = m_nextId++;
     m_stickyNotes.push_back(std::move(note));
     m_dirty = true;
+    if (g_pCanvasPersistence)
+        g_pCanvasPersistence->scheduleSave();
 }
 
 void CCanvasAnnotation::removeStickyNote(uint64_t id) {
     std::erase_if(m_stickyNotes, [id](const SAnnotationStickyNote& n) { return n.id == id; });
     m_dirty = true;
+    if (g_pCanvasPersistence)
+        g_pCanvasPersistence->scheduleSave();
 }
 
 void CCanvasAnnotation::addText(SAnnotationText text) {
     text.id = m_nextId++;
     m_texts.push_back(std::move(text));
     m_dirty = true;
+    if (g_pCanvasPersistence)
+        g_pCanvasPersistence->scheduleSave();
 }
 
 void CCanvasAnnotation::removeText(uint64_t id) {
     std::erase_if(m_texts, [id](const SAnnotationText& t) { return t.id == id; });
     m_dirty = true;
+    if (g_pCanvasPersistence)
+        g_pCanvasPersistence->scheduleSave();
 }
 
 SAnnotationStroke* CCanvasAnnotation::findNearestStroke(const Vector2D& canvasPos, double threshold) {
@@ -131,6 +148,8 @@ void CCanvasAnnotation::clearAll() {
     m_stickyNotes.clear();
     m_texts.clear();
     m_dirty = true;
+    if (g_pCanvasPersistence)
+        g_pCanvasPersistence->scheduleSave();
 }
 
 void CCanvasAnnotation::clearByType(const std::string& type) {
@@ -143,6 +162,8 @@ void CCanvasAnnotation::clearByType(const std::string& type) {
     else if (type == "text")
         m_texts.clear();
     m_dirty = true;
+    if (g_pCanvasPersistence)
+        g_pCanvasPersistence->scheduleSave();
 }
 
 static void renderArrowhead(cairo_t* cr, const Vector2D& from, const Vector2D& to, double scale) {
