@@ -119,11 +119,11 @@ Plans:
   2. Clicking a spot on the minimap jumps the viewport to that canvas area
   3. User can press a keybind, type a window name, and jump to that window
   4. Maximize action zooms the canvas until the target window fills the screen
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 07-01: TBD
-- [ ] 07-02: TBD
+- [ ] 07-01-PLAN.md — Minimap overlay and zoom-to-fit viewport manipulation
+- [ ] 07-02-PLAN.md — Quick jump text search overlay
 
 ### Phase 8: Window Organization
 **Goal**: User can organize windows with snapping, grid layout, color tags, and filtered views
@@ -200,7 +200,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 4. Layer-Shell Compatibility | 0/1 | Not started | - |
 | 5. Canvas Background | 0/2 | Not started | - |
 | 6. Persistence | 1/1 | Complete   | 2026-03-25 |
-| 7. Navigation | 0/? | Not started | - |
+| 7. Navigation | 0/2 | Not started | - |
 | 8. Window Organization | 0/? | Not started | - |
 | 9. Annotation Foundation | 0/? | Not started | - |
 | 10. Annotation Extended | 0/? | Not started | - |
