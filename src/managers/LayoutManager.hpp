@@ -2,6 +2,7 @@
 
 #include "../layout/DwindleLayout.hpp"
 #include "../layout/MasterLayout.hpp"
+#include "../layout/CanvasLayout.hpp"
 
 class CLayoutManager {
   public:
@@ -18,13 +19,15 @@ class CLayoutManager {
   private:
     enum eHyprLayouts : uint8_t {
         LAYOUT_DWINDLE = 0,
-        LAYOUT_MASTER
+        LAYOUT_MASTER,
+        LAYOUT_CANVAS
     };
 
     int                                               m_currentLayoutID = LAYOUT_DWINDLE;
 
     CHyprDwindleLayout                                m_dwindleLayout;
     CHyprMasterLayout                                 m_masterLayout;
+    CCanvasLayout                                     m_canvasLayout;
     std::vector<std::pair<std::string, IHyprLayout*>> m_layouts;
 };
 

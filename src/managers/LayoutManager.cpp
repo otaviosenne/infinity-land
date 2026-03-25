@@ -3,6 +3,7 @@
 CLayoutManager::CLayoutManager() {
     m_layouts.emplace_back(std::make_pair<>("dwindle", &m_dwindleLayout));
     m_layouts.emplace_back(std::make_pair<>("master", &m_masterLayout));
+    m_layouts.emplace_back(std::make_pair<>("canvas", &m_canvasLayout));
 }
 
 IHyprLayout* CLayoutManager::getCurrentLayout() {
