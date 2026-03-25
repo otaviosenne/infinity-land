@@ -48,7 +48,7 @@
 
 ### System
 
-- [ ] **SYST-01**: Full undo/redo stack across all actions (Ctrl+Z / Ctrl+Shift+Z)
+- [x] **SYST-01**: Full undo/redo stack across all actions (Ctrl+Z / Ctrl+Shift+Z)
 - [x] **SYST-02**: Dark and light theme with toggle button
 - [x] **SYST-03**: Workspace views filter which windows are visible on the canvas
 - [ ] **SYST-04**: Waybar, wofi, SwayNC, and layer-shell apps work normally (excluded from canvas transform)
@@ -115,7 +115,7 @@
 | ANOT-07 | Phase 10 | Complete |
 | ANOT-08 | Phase 10 | Complete |
 | ANOT-09 | Phase 9 | Complete |
-| SYST-01 | Phase 11 | Pending |
+| SYST-01 | Phase 11 | Complete |
 | SYST-02 | Phase 5 | Complete |
 | SYST-03 | Phase 8 | Complete |
 | SYST-04 | Phase 4 | Pending |

@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v0.51
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 10-02-PLAN.md
-last_updated: "2026-03-25T23:21:04.051Z"
+stopped_at: Completed 11-01-PLAN.md
+last_updated: "2026-03-25T23:25:15.367Z"
 progress:
   total_phases: 11
   completed_phases: 10
-  total_plans: 16
-  completed_plans: 16
+  total_plans: 18
+  completed_plans: 17
 ---
 
 # Project State
@@ -19,11 +19,11 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** Every open window lives on one infinite canvas with real interaction
-**Current focus:** Phase 10 — annotation-extended
+**Current focus:** Phase 11 — undo-redo-and-performance
 
 ## Current Position
 
-Phase: 10 (annotation-extended) — EXECUTING
+Phase: 11 (undo-redo-and-performance) — EXECUTING
 Plan: 2 of 2
 
 ## Performance Metrics
@@ -58,6 +58,7 @@ Plan: 2 of 2
 | Phase 09 P02 | 8min | 2 tasks | 5 files |
 | Phase 10 P01 | 5min | 2 tasks | 6 files |
 | Phase 10 P02 | 5min | 2 tasks | 4 files |
+| Phase 11 P01 | 5min | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -84,6 +85,8 @@ Recent decisions affecting current work:
 - [Phase 10]: Pango for text rendering in annotations instead of raw Cairo text
 - [Phase 10]: Text input via awaitingText state machine rather than inline editing
 - [Phase 10]: scheduleSave calls in each annotation mutation method for automatic persistence
+- [Phase 11]: Command pattern with ICanvasCommand interface for polymorphic undo/redo
+- [Phase 11]: Unified stack for both window and annotation actions
 
 ### Pending Todos
 
@@ -95,6 +98,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-25T23:20:19.090Z
-Stopped at: Completed 10-02-PLAN.md
+Last session: 2026-03-25T23:31:00Z
+Stopped at: Completed 11-01-PLAN.md
 Resume file: None
