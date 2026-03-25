@@ -77,11 +77,10 @@ Plans:
   2. Wofi launcher opens and accepts input normally
   3. SwayNC notification center appears and dismisses correctly
   4. All existing Hyprland keybindings (SUPER+Q, SUPER+W, etc.) still function
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 04-01: TBD
-- [ ] 04-02: TBD
+- [ ] 04-01-PLAN.md — Audit layer-shell isolation and verify compatibility
 
 ### Phase 5: Canvas Background
 **Goal**: Canvas has a visible dot grid with cursor glow and supports dark/light themes
@@ -199,7 +198,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 1. Fork and Build | 0/? | Not started | - |
 | 2. Canvas Viewport | 1/2 | In Progress|  |
 | 3. Canvas Layout | 0/1 | Not started | - |
-| 4. Layer-Shell Compatibility | 0/? | Not started | - |
+| 4. Layer-Shell Compatibility | 0/1 | Not started | - |
 | 5. Canvas Background | 0/? | Not started | - |
 | 6. Persistence | 0/? | Not started | - |
 | 7. Navigation | 0/? | Not started | - |
