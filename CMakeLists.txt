@@ -30,6 +30,16 @@ execute_process(COMMAND ./scripts/generateVersion.sh
 execute_process(COMMAND ./scripts/generateShaderIncludes.sh
                 WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 
+include(FetchContent)
+FetchContent_Declare(
+  nlohmann_json
+  GIT_REPOSITORY https://github.com/nlohmann/json.git
+  GIT_TAG v3.11.3
+  GIT_SHALLOW TRUE
+)
+set(JSON_BuildTests OFF CACHE INTERNAL "")
+FetchContent_MakeAvailable(nlohmann_json)
+
 find_package(PkgConfig REQUIRED)
 
 # Try to find canihavesomecoffee's udis86 using pkgconfig vmd/udis86 does not
@@ -270,6 +280,8 @@ target_link_libraries(
   PkgConfig::hyprcursor_dep
   PkgConfig::hyprgraphics_dep
   PkgConfig::deps)
+target_link_libraries(Hyprland nlohmann_json::nlohmann_json)
+
 if(udis_dep_FOUND)
   target_link_libraries(Hyprland PkgConfig::udis_dep)
 else()
