@@ -35,6 +35,34 @@ Vector2D CCanvasViewport::offset() const {
     return m_offset;
 }
 
+void CCanvasViewport::setViewCenter(const Vector2D& canvasPos) {
+    const auto pMonitor = g_pCompositor->m_lastMonitor.lock();
+    if (!pMonitor)
+        return;
+
+    const auto monitorCenter = pMonitor->m_position + pMonitor->m_size / 2.0;
+    m_offset = monitorCenter - canvasPos * m_scale;
+    damageAllMonitors();
+}
+
+void CCanvasViewport::zoomToFit(const CBox& canvasBox) {
+    const auto pMonitor = g_pCompositor->m_lastMonitor.lock();
+    if (!pMonitor || canvasBox.w <= 0 || canvasBox.h <= 0)
+        return;
+
+    const double FIT_PADDING = 0.9;
+    const double newScale    = std::clamp(
+        std::min(pMonitor->m_size.x / canvasBox.w, pMonitor->m_size.y / canvasBox.h) * FIT_PADDING,
+        MIN_SCALE, MAX_SCALE);
+
+    m_scale = newScale;
+
+    const auto monitorCenter = pMonitor->m_position + pMonitor->m_size / 2.0;
+    const auto boxCenter     = Vector2D{canvasBox.x + canvasBox.w / 2.0, canvasBox.y + canvasBox.h / 2.0};
+    m_offset = monitorCenter - boxCenter * m_scale;
+    damageAllMonitors();
+}
+
 void CCanvasViewport::damageAllMonitors() {
     for (auto const& m : g_pCompositor->m_monitors) {
         m->m_damage.damageEntire();

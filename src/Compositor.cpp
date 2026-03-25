@@ -50,6 +50,7 @@
 #include "canvas/CanvasViewport.hpp"
 #include "canvas/CanvasBackground.hpp"
 #include "canvas/CanvasTheme.hpp"
+#include "canvas/CanvasMinimap.hpp"
 #include "managers/SessionLockManager.hpp"
 #include "managers/XWaylandManager.hpp"
 
@@ -653,6 +654,9 @@ void CCompositor::initManagers(eManagersInitStage stage) {
 
             Debug::log(LOG, "Creating the CanvasBackground!");
             g_pCanvasBackground = makeUnique<CCanvasBackground>();
+
+            Debug::log(LOG, "Creating the CanvasMinimap!");
+            g_pCanvasMinimap = makeUnique<CCanvasMinimap>();
 
             Debug::log(LOG, "Creating the LayoutManager!");
             g_pLayoutManager = makeUnique<CLayoutManager>();

@@ -34,6 +34,7 @@
 #include "pass/RendererHintsPassElement.hpp"
 #include "pass/SurfacePassElement.hpp"
 #include "../canvas/CanvasViewport.hpp"
+#include "../canvas/CanvasMinimap.hpp"
 #include "debug/Log.hpp"
 #include "../protocols/ColorManagement.hpp"
 #include "../protocols/types/ContentType.hpp"
@@ -915,6 +916,9 @@ void CHyprRenderer::renderAllClientsForWorkspace(PHLMONITOR pMonitor, PHLWORKSPA
             renderLayer(ls.lock(), pMonitor, time);
         }
 
+        if (g_pCanvasMinimap)
+            g_pCanvasMinimap->render(pMonitor, g_pHyprOpenGL->m_renderData.damage);
+
         return;
     }
 
@@ -1017,6 +1021,9 @@ void CHyprRenderer::renderAllClientsForWorkspace(PHLMONITOR pMonitor, PHLWORKSPA
             renderLayer(ls.lock(), pMonitor, time, true);
         }
     }
+
+    if (g_pCanvasMinimap)
+        g_pCanvasMinimap->render(pMonitor, g_pHyprOpenGL->m_renderData.damage);
 
     renderDragIcon(pMonitor, time);
 

@@ -13,6 +13,8 @@ class CCanvasViewport {
     double   scale() const;
     Vector2D offset() const;
 
+    void     setViewCenter(const Vector2D& canvasPos);
+    void     zoomToFit(const CBox& canvasBox);
     void     damageAllMonitors();
 
   private:
