@@ -41,6 +41,7 @@
 #include "../../managers/permissions/DynamicPermissionManager.hpp"
 #include "../../canvas/CanvasViewport.hpp"
 #include "../../canvas/CanvasDrawMode.hpp"
+#include "../../canvas/CanvasToolbar.hpp"
 
 #include "../../helpers/time/Time.hpp"
 #include "../../helpers/MiscFunctions.hpp"
@@ -640,6 +641,12 @@ void CInputManager::onMouseButton(IPointer::SButtonEvent e) {
             m_canvasPanning = false;
             return;
         }
+    }
+
+    if (g_pCanvasToolbar && g_pCanvasDrawMode && g_pCanvasDrawMode->isActive() && e.button == BTN_LEFT && e.state == WL_POINTER_BUTTON_STATE_PRESSED) {
+        const auto pos = g_pPointerManager->position();
+        if (g_pCanvasToolbar->handleClick(pos))
+            return;
     }
 
     if (g_pCanvasDrawMode && g_pCanvasDrawMode->isActive() && (e.button == BTN_LEFT)) {

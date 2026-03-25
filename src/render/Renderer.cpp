@@ -38,6 +38,7 @@
 #include "../canvas/CanvasViewport.hpp"
 #include "../canvas/CanvasMinimap.hpp"
 #include "../canvas/CanvasQuickJump.hpp"
+#include "../canvas/CanvasToolbar.hpp"
 #include "../canvas/CanvasTags.hpp"
 #include "debug/Log.hpp"
 #include "../protocols/ColorManagement.hpp"
@@ -953,6 +954,9 @@ void CHyprRenderer::renderAllClientsForWorkspace(PHLMONITOR pMonitor, PHLWORKSPA
         if (g_pCanvasQuickJump)
             g_pCanvasQuickJump->render(pMonitor, g_pHyprOpenGL->m_renderData.damage);
 
+        if (g_pCanvasToolbar)
+            g_pCanvasToolbar->render(pMonitor, g_pHyprOpenGL->m_renderData.damage);
+
         return;
     }
 
@@ -1064,6 +1068,9 @@ void CHyprRenderer::renderAllClientsForWorkspace(PHLMONITOR pMonitor, PHLWORKSPA
 
     if (g_pCanvasQuickJump)
         g_pCanvasQuickJump->render(pMonitor, g_pHyprOpenGL->m_renderData.damage);
+
+    if (g_pCanvasToolbar)
+        g_pCanvasToolbar->render(pMonitor, g_pHyprOpenGL->m_renderData.damage);
 
     renderDragIcon(pMonitor, time);
 
