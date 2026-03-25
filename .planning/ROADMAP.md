@@ -203,5 +203,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 7. Navigation | 1/2 | In progress | - |
 | 8. Window Organization | 0/2 | Not started | - |
 | 9. Annotation Foundation | 1/2 | In Progress|  |
-| 10. Annotation Extended | 0/2 | Not started | - |
+| 10. Annotation Extended | 1/2 | In Progress|  |
 | 11. Undo/Redo and Performance | 0/? | Not started | - |
