@@ -19,12 +19,12 @@
 
 - [ ] **WNDW-01**: User can drag windows on canvas with SUPER+left-click
 - [ ] **WNDW-02**: User can resize windows on canvas with SUPER+right-click
-- [ ] **WNDW-03**: Windows cannot overlap when dropped — snap to nearest free position
+- [x] **WNDW-03**: Windows cannot overlap when dropped — snap to nearest free position
 - [ ] **WNDW-04**: New windows appear at center of current viewport
 - [ ] **WNDW-05**: Default window size is 1200x800
 - [x] **WNDW-06**: Window remembers its last size per app class across restarts
 - [x] **WNDW-07**: User can maximize a window via zoom-to-fit (canvas zooms until window fills screen)
-- [ ] **WNDW-08**: User can snap selected windows into grid layout via keybind
+- [x] **WNDW-08**: User can snap selected windows into grid layout via keybind
 - [ ] **WNDW-09**: User can assign color tags to windows for visual organization
 - [ ] **WNDW-10**: All windows render as real interactive Wayland surfaces (not thumbnails)
 
@@ -95,12 +95,12 @@
 | CANV-07 | Phase 5 | Complete |
 | WNDW-01 | Phase 3 | Pending |
 | WNDW-02 | Phase 3 | Pending |
-| WNDW-03 | Phase 8 | Pending |
+| WNDW-03 | Phase 8 | Complete |
 | WNDW-04 | Phase 3 | Pending |
 | WNDW-05 | Phase 3 | Pending |
 | WNDW-06 | Phase 6 | Complete |
 | WNDW-07 | Phase 7 | Complete |
-| WNDW-08 | Phase 8 | Pending |
+| WNDW-08 | Phase 8 | Complete |
 | WNDW-09 | Phase 8 | Pending |
 | WNDW-10 | Phase 3 | Pending |
 | NAVG-01 | Phase 7 | Complete |
