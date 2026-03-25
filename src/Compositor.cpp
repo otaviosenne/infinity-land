@@ -47,6 +47,7 @@
 #include "render/decorations/CHyprGroupBarDecoration.hpp"
 
 #include "managers/KeybindManager.hpp"
+#include "canvas/CanvasViewport.hpp"
 #include "managers/SessionLockManager.hpp"
 #include "managers/XWaylandManager.hpp"
 
@@ -876,6 +877,7 @@ bool CCompositor::monitorExists(PHLMONITOR pMonitor) {
 }
 
 PHLWINDOW CCompositor::vectorToWindowUnified(const Vector2D& pos, uint8_t properties, PHLWINDOW pIgnoreWindow) {
+    const auto  canvasPos         = g_pCanvasViewport ? g_pCanvasViewport->screenToCanvas(pos) : pos;
     const auto  PMONITOR          = getMonitorFromVector(pos);
     static auto PRESIZEONBORDER   = CConfigValue<Hyprlang::INT>("general:resize_on_border");
     static auto PBORDERSIZE       = CConfigValue<Hyprlang::INT>("general:border_size");
@@ -935,7 +937,7 @@ PHLWINDOW CCompositor::vectorToWindowUnified(const Vector2D& pos, uint8_t proper
 
                     const auto BB  = w->getWindowBoxUnified(properties);
                     CBox       box = BB.copy().expand(!w->isX11OverrideRedirect() ? BORDER_GRAB_AREA : 0);
-                    if (box.containsPoint(g_pPointerManager->position())) {
+                    if (box.containsPoint(canvasPos)) {
 
                         if (w->m_isX11 && w->isX11OverrideRedirect() && !w->m_xwaylandSurface->wantsFocus()) {
                             // Override Redirect
@@ -947,7 +949,7 @@ PHLWINDOW CCompositor::vectorToWindowUnified(const Vector2D& pos, uint8_t proper
                     }
 
                     if (!w->m_isX11) {
-                        if (w->hasPopupAt(pos))
+                        if (w->hasPopupAt(canvasPos))
                             return w;
                     }
                 }
@@ -989,7 +991,7 @@ PHLWINDOW CCompositor::vectorToWindowUnified(const Vector2D& pos, uint8_t proper
 
             if (!w->m_isX11 && !w->m_isFloating && w->m_isMapped && w->workspaceID() == WSPID && !w->isHidden() && !w->m_X11ShouldntFocus &&
                 !w->m_windowData.noFocus.valueOrDefault() && w != pIgnoreWindow) {
-                if (w->hasPopupAt(pos))
+                if (w->hasPopupAt(canvasPos))
                     return w;
             }
         }
@@ -1007,7 +1009,7 @@ PHLWINDOW CCompositor::vectorToWindowUnified(const Vector2D& pos, uint8_t proper
             if (!w->m_isFloating && w->m_isMapped && w->workspaceID() == WSPID && !w->isHidden() && !w->m_X11ShouldntFocus && !w->m_windowData.noFocus.valueOrDefault() &&
                 w != pIgnoreWindow) {
                 CBox box = (properties & USE_PROP_TILED) ? w->getWindowBoxUnified(properties) : CBox{w->m_position, w->m_size};
-                if (box.containsPoint(pos))
+                if (box.containsPoint(canvasPos))
                     return w;
             }
         }
@@ -1058,12 +1060,14 @@ Vector2D CCompositor::vectorToSurfaceLocal(const Vector2D& vec, PHLWINDOW pWindo
     if (!validMapped(pWindow))
         return {};
 
-    if (pWindow->m_isX11)
-        return vec - pWindow->m_realPosition->goal();
+    const auto canvasVec = g_pCanvasViewport ? g_pCanvasViewport->screenToCanvas(vec) : vec;
 
-    const auto PPOPUP = pWindow->m_popupHead->at(vec);
+    if (pWindow->m_isX11)
+        return canvasVec - pWindow->m_realPosition->goal();
+
+    const auto PPOPUP = pWindow->m_popupHead->at(canvasVec);
     if (PPOPUP)
-        return vec - PPOPUP->coordsGlobal();
+        return canvasVec - PPOPUP->coordsGlobal();
 
     std::tuple<SP<CWLSurfaceResource>, Vector2D> iterData = {pSurface, {-1337, -1337}};
 
@@ -1078,9 +1082,9 @@ Vector2D CCompositor::vectorToSurfaceLocal(const Vector2D& vec, PHLWINDOW pWindo
     CBox geom = pWindow->m_xdgSurface->m_current.geometry;
 
     if (std::get<1>(iterData) == Vector2D{-1337, -1337})
-        return vec - pWindow->m_realPosition->goal();
+        return canvasVec - pWindow->m_realPosition->goal();
 
-    return vec - pWindow->m_realPosition->goal() - std::get<1>(iterData) + Vector2D{geom.x, geom.y};
+    return canvasVec - pWindow->m_realPosition->goal() - std::get<1>(iterData) + Vector2D{geom.x, geom.y};
 }
 
 PHLMONITOR CCompositor::getMonitorFromOutput(SP<Aquamarine::IOutput> out) {

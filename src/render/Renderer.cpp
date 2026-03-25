@@ -32,6 +32,7 @@
 #include "pass/RectPassElement.hpp"
 #include "pass/RendererHintsPassElement.hpp"
 #include "pass/SurfacePassElement.hpp"
+#include "../canvas/CanvasViewport.hpp"
 #include "debug/Log.hpp"
 #include "../protocols/ColorManagement.hpp"
 #include "../protocols/types/ContentType.hpp"
@@ -483,6 +484,10 @@ void CHyprRenderer::renderWindow(PHLWINDOW pWindow, PHLMONITOR pMonitor, const T
 
     CSurfacePassElement::SRenderData renderdata = {pMonitor, time};
     CBox                             textureBox = {REALPOS.x, REALPOS.y, std::max(pWindow->m_realSize->value().x, 5.0), std::max(pWindow->m_realSize->value().y, 5.0)};
+
+    if (g_pCanvasViewport && !pWindow->m_pinned) {
+        textureBox = g_pCanvasViewport->canvasToScreen(textureBox);
+    }
 
     renderdata.pos.x = textureBox.x;
     renderdata.pos.y = textureBox.y;
