@@ -9,6 +9,7 @@
 #include "KeybindManager.hpp"
 #include "PointerManager.hpp"
 #include "../canvas/CanvasTheme.hpp"
+#include "../canvas/CanvasViewport.hpp"
 #include "Compositor.hpp"
 #include "TokenManager.hpp"
 #include "eventLoop/EventLoopManager.hpp"
@@ -144,6 +145,7 @@ CKeybindManager::CKeybindManager() {
     m_dispatchers["global"]                         = global;
     m_dispatchers["setprop"]                        = setProp;
     m_dispatchers["canvas:toggletheme"]             = canvasToggleTheme;
+    m_dispatchers["canvas:zoomtofit"]               = canvasZoomToFit;
 
     m_scrollTimer.reset();
 
@@ -3312,5 +3314,17 @@ SDispatchResult CKeybindManager::canvasToggleTheme(std::string args) {
         return {.success = false, .error = "Canvas theme not initialized"};
 
     g_pCanvasTheme->toggle();
+    return {};
+}
+
+SDispatchResult CKeybindManager::canvasZoomToFit(std::string args) {
+    if (!g_pCanvasViewport)
+        return {.success = false, .error = "Canvas viewport not initialized"};
+
+    const auto PWINDOW = g_pCompositor->m_lastWindow.lock();
+    if (!PWINDOW)
+        return {.success = false, .error = "No focused window"};
+
+    g_pCanvasViewport->zoomToFit(CBox{PWINDOW->m_realPosition->goal(), PWINDOW->m_realSize->goal()});
     return {};
 }
