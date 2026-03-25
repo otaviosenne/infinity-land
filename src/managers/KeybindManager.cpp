@@ -11,6 +11,7 @@
 #include "../canvas/CanvasTheme.hpp"
 #include "../canvas/CanvasViewport.hpp"
 #include "../canvas/CanvasQuickJump.hpp"
+#include "../canvas/CanvasAnnotation.hpp"
 #include "../canvas/CanvasDrawMode.hpp"
 #include "../layout/CanvasSnap.hpp"
 #include "../layout/CanvasLayout.hpp"
@@ -156,6 +157,7 @@ CKeybindManager::CKeybindManager() {
     m_dispatchers["canvas:quickjump"]              = canvasQuickJump;
     m_dispatchers["canvas:gridsnap"]               = canvasGridSnap;
     m_dispatchers["canvas:drawmode"]               = canvasDrawMode;
+    m_dispatchers["canvas:clearannotations"]       = canvasClearAnnotations;
     m_dispatchers["canvas:tag"]                    = canvasTag;
     m_dispatchers["canvas:view"]                   = canvasView;
 
@@ -3429,6 +3431,23 @@ SDispatchResult CKeybindManager::canvasDrawMode(std::string args) {
         return {.success = false, .error = "Canvas draw mode not initialized"};
 
     g_pCanvasDrawMode->toggle();
+
+    if (g_pCanvasViewport)
+        g_pCanvasViewport->damageAllMonitors();
+
+    return {};
+}
+
+SDispatchResult CKeybindManager::canvasClearAnnotations(std::string args) {
+    if (!g_pCanvasAnnotation)
+        return {.success = false, .error = "Canvas annotations not initialized"};
+
+    if (args.empty() || args == "all")
+        g_pCanvasAnnotation->clearAll();
+    else
+        g_pCanvasAnnotation->clearByType(args);
+
+    g_pCanvasAnnotation->markDirty();
 
     if (g_pCanvasViewport)
         g_pCanvasViewport->damageAllMonitors();
