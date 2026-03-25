@@ -198,7 +198,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Fork and Build | 0/? | Not started | - |
-| 2. Canvas Viewport | 0/? | Not started | - |
+| 2. Canvas Viewport | 1/2 | In Progress|  |
 | 3. Canvas Layout | 0/? | Not started | - |
 | 4. Layer-Shell Compatibility | 0/? | Not started | - |
 | 5. Canvas Background | 0/? | Not started | - |
