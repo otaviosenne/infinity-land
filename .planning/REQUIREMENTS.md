@@ -86,47 +86,47 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CANV-01 | — | Pending |
-| CANV-02 | — | Pending |
-| CANV-03 | — | Pending |
-| CANV-04 | — | Pending |
-| CANV-05 | — | Pending |
-| CANV-06 | — | Pending |
-| CANV-07 | — | Pending |
-| WNDW-01 | — | Pending |
-| WNDW-02 | — | Pending |
-| WNDW-03 | — | Pending |
-| WNDW-04 | — | Pending |
-| WNDW-05 | — | Pending |
-| WNDW-06 | — | Pending |
-| WNDW-07 | — | Pending |
-| WNDW-08 | — | Pending |
-| WNDW-09 | — | Pending |
-| WNDW-10 | — | Pending |
-| NAVG-01 | — | Pending |
-| NAVG-02 | — | Pending |
-| NAVG-03 | — | Pending |
-| ANOT-01 | — | Pending |
-| ANOT-02 | — | Pending |
-| ANOT-03 | — | Pending |
-| ANOT-04 | — | Pending |
-| ANOT-05 | — | Pending |
-| ANOT-06 | — | Pending |
-| ANOT-07 | — | Pending |
-| ANOT-08 | — | Pending |
-| ANOT-09 | — | Pending |
-| SYST-01 | — | Pending |
-| SYST-02 | — | Pending |
-| SYST-03 | — | Pending |
-| SYST-04 | — | Pending |
-| SYST-05 | — | Pending |
-| SYST-06 | — | Pending |
+| CANV-01 | Phase 2 | Pending |
+| CANV-02 | Phase 2 | Pending |
+| CANV-03 | Phase 5 | Pending |
+| CANV-04 | Phase 5 | Pending |
+| CANV-05 | Phase 2 | Pending |
+| CANV-06 | Phase 6 | Pending |
+| CANV-07 | Phase 5 | Pending |
+| WNDW-01 | Phase 3 | Pending |
+| WNDW-02 | Phase 3 | Pending |
+| WNDW-03 | Phase 8 | Pending |
+| WNDW-04 | Phase 3 | Pending |
+| WNDW-05 | Phase 3 | Pending |
+| WNDW-06 | Phase 6 | Pending |
+| WNDW-07 | Phase 7 | Pending |
+| WNDW-08 | Phase 8 | Pending |
+| WNDW-09 | Phase 8 | Pending |
+| WNDW-10 | Phase 3 | Pending |
+| NAVG-01 | Phase 7 | Pending |
+| NAVG-02 | Phase 7 | Pending |
+| NAVG-03 | Phase 7 | Pending |
+| ANOT-01 | Phase 9 | Pending |
+| ANOT-02 | Phase 9 | Pending |
+| ANOT-03 | Phase 10 | Pending |
+| ANOT-04 | Phase 10 | Pending |
+| ANOT-05 | Phase 10 | Pending |
+| ANOT-06 | Phase 9 | Pending |
+| ANOT-07 | Phase 10 | Pending |
+| ANOT-08 | Phase 10 | Pending |
+| ANOT-09 | Phase 9 | Pending |
+| SYST-01 | Phase 11 | Pending |
+| SYST-02 | Phase 5 | Pending |
+| SYST-03 | Phase 8 | Pending |
+| SYST-04 | Phase 4 | Pending |
+| SYST-05 | Phase 4 | Pending |
+| SYST-06 | Phase 11 | Pending |
 
 **Coverage:**
 - v1 requirements: 35 total
-- Mapped to phases: 0
-- Unmapped: 35
+- Mapped to phases: 35
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-25*
-*Last updated: 2026-03-25 after initial definition*
+*Last updated: 2026-03-25 after roadmap creation*
