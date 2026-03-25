@@ -183,8 +183,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 11-01: TBD
-- [ ] 11-02: TBD
+- [ ] 11-01-PLAN.md — Command pattern undo/redo system with keybinds
+- [ ] 11-02-PLAN.md — Visibility culling and performance verification
 
 ## Progress
 
