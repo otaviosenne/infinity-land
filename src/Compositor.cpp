@@ -643,6 +643,9 @@ void CCompositor::initManagers(eManagersInitStage stage) {
             Debug::log(LOG, "Creating the CHyprError!");
             g_pHyprError = makeUnique<CHyprError>();
 
+            Debug::log(LOG, "Creating the CanvasViewport!");
+            g_pCanvasViewport = makeUnique<CCanvasViewport>();
+
             Debug::log(LOG, "Creating the LayoutManager!");
             g_pLayoutManager = makeUnique<CLayoutManager>();
 
@@ -650,6 +653,8 @@ void CCompositor::initManagers(eManagersInitStage stage) {
             g_pTokenManager = makeUnique<CTokenManager>();
 
             g_pConfigManager->init();
+
+            g_pLayoutManager->switchToLayout("canvas");
 
             Debug::log(LOG, "Creating the PointerManager!");
             g_pPointerManager = makeUnique<CPointerManager>();
