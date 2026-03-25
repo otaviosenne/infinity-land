@@ -10,6 +10,10 @@ uniform float u_gridSpacing;
 uniform float u_dotRadius;
 uniform vec4 u_dotColor;
 uniform vec4 u_bgColor;
+uniform vec2 u_cursorPos;
+uniform float u_glowRadius;
+uniform vec4 u_glowDotColor;
+uniform float u_glowDotRadius;
 
 layout(location = 0) out vec4 fragColor;
 
@@ -23,8 +27,14 @@ void main() {
     vec2 gridScreenPos = gridPos * u_canvasScale + u_canvasOffset;
     float dist = distance(screenPos, gridScreenPos);
 
-    float dotAlpha = 1.0 - smoothstep(u_dotRadius - 0.5, u_dotRadius + 0.5, dist);
+    float cursorDist = distance(gridScreenPos, u_cursorPos);
+    float glowFactor = 1.0 - smoothstep(0.0, u_glowRadius, cursorDist);
 
-    fragColor = mix(u_bgColor, u_dotColor, dotAlpha);
+    float effectiveRadius = mix(u_dotRadius, u_glowDotRadius, glowFactor);
+    vec4 effectiveDotColor = mix(u_dotColor, u_glowDotColor, glowFactor);
+
+    float dotAlpha = 1.0 - smoothstep(effectiveRadius - 0.5, effectiveRadius + 0.5, dist);
+
+    fragColor = mix(u_bgColor, effectiveDotColor, dotAlpha);
 }
 )#"

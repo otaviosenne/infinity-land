@@ -1,10 +1,15 @@
 #include "CanvasBackground.hpp"
 #include "CanvasViewport.hpp"
 #include "../render/OpenGL.hpp"
+#include "../managers/PointerManager.hpp"
+#include "../render/Renderer.hpp"
 
 static constexpr float BASE_GRID_SPACING = 20.0f;
 static constexpr float LOW_ZOOM_THRESHOLD = 0.4f;
 static constexpr float DOT_RADIUS = 1.5f;
+static constexpr float GLOW_RADIUS = 130.0f;
+static constexpr float GLOW_DOT_RADIUS = 2.0f;
+static constexpr float GLOW_DAMAGE_SIZE = 300.0f;
 
 void CCanvasBackground::render(PHLMONITOR pMonitor, const CRegion& damage) {
     if (!g_pCanvasViewport || !g_pHyprOpenGL)
@@ -38,6 +43,17 @@ void CCanvasBackground::render(PHLMONITOR pMonitor, const CRegion& damage) {
     glUniform4f(glGetUniformLocation(shader.program, "u_bgColor"),
         0.102f, 0.102f, 0.180f, 1.0f);
 
+    const auto cursorGlobal = g_pPointerManager->position();
+    const auto cursorLocal = cursorGlobal - pMonitor->m_position;
+    const float cursorY = monSize.y - static_cast<float>(cursorLocal.y);
+
+    glUniform2f(glGetUniformLocation(shader.program, "u_cursorPos"),
+        static_cast<float>(cursorLocal.x), cursorY);
+    glUniform1f(glGetUniformLocation(shader.program, "u_glowRadius"), GLOW_RADIUS);
+    glUniform4f(glGetUniformLocation(shader.program, "u_glowDotColor"),
+        0.612f, 0.639f, 0.686f, 1.0f);
+    glUniform1f(glGetUniformLocation(shader.program, "u_glowDotRadius"), GLOW_DOT_RADIUS);
+
     glBindVertexArray(shader.uniformLocations[SHADER_SHADER_VAO]);
 
     damage.forEachRect([](const auto& RECT) {
@@ -47,6 +63,11 @@ void CCanvasBackground::render(PHLMONITOR pMonitor, const CRegion& damage) {
 
     glBindVertexArray(0);
     g_pHyprOpenGL->scissor(nullptr);
+
+    const float halfDamage = GLOW_DAMAGE_SIZE / 2.0f;
+    CBox glowArea = {cursorGlobal.x - halfDamage, cursorGlobal.y - halfDamage,
+        GLOW_DAMAGE_SIZE, GLOW_DAMAGE_SIZE};
+    g_pHyprRenderer->damageBox(glowArea);
 }
 
 float CCanvasBackground::gridSpacingForScale(double scale) const {
