@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v0.51
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 10-01-PLAN.md
-last_updated: "2026-03-25T23:09:35.294Z"
+stopped_at: Completed 10-02-PLAN.md
+last_updated: "2026-03-25T23:20:19.094Z"
 progress:
   total_phases: 11
-  completed_phases: 9
+  completed_phases: 10
   total_plans: 16
-  completed_plans: 15
+  completed_plans: 16
 ---
 
 # Project State
@@ -57,6 +57,7 @@ Plan: 2 of 2
 | Phase 09 P01 | 5min | 2 tasks | 9 files |
 | Phase 09 P02 | 8min | 2 tasks | 5 files |
 | Phase 10 P01 | 5min | 2 tasks | 6 files |
+| Phase 10 P02 | 5min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -82,6 +83,7 @@ Recent decisions affecting current work:
 - [Phase 09]: TBTN_ prefix for toolbar button enum to avoid Linux input header BTN_TOOL_* macro conflicts
 - [Phase 10]: Pango for text rendering in annotations instead of raw Cairo text
 - [Phase 10]: Text input via awaitingText state machine rather than inline editing
+- [Phase 10]: scheduleSave calls in each annotation mutation method for automatic persistence
 
 ### Pending Todos
 
@@ -93,6 +95,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-25T23:00:22.862Z
-Stopped at: Completed 09-02-PLAN.md (checkpoint pending)
+Last session: 2026-03-25T23:20:19.090Z
+Stopped at: Completed 10-02-PLAN.md
 Resume file: None

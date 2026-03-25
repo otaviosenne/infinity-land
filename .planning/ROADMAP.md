@@ -21,7 +21,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 7: Navigation** - Minimap, quick jump, and zoom-to-fit
 - [ ] **Phase 8: Window Organization** - Anti-overlap snap, grid snap, color tags, workspace views
 - [ ] **Phase 9: Annotation Foundation** - Drawing mode with toolbar, freehand brush, and eraser
-- [ ] **Phase 10: Annotation Extended** - Arrows, sticky notes, text tool, persistence, and clear
+- [x] **Phase 10: Annotation Extended** - Arrows, sticky notes, text tool, persistence, and clear (completed 2026-03-25)
 - [ ] **Phase 11: Undo/Redo and Performance** - Command pattern across all actions, 60fps target
 
 ## Phase Details
@@ -203,5 +203,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 7. Navigation | 1/2 | In progress | - |
 | 8. Window Organization | 0/2 | Not started | - |
 | 9. Annotation Foundation | 1/2 | In Progress|  |
-| 10. Annotation Extended | 1/2 | In Progress|  |
+| 10. Annotation Extended | 2/2 | Complete   | 2026-03-25 |
 | 11. Undo/Redo and Performance | 0/? | Not started | - |

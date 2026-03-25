@@ -42,8 +42,8 @@
 - [x] **ANOT-04**: Sticky note tool — floating text notes on the canvas
 - [x] **ANOT-05**: Text tool — click canvas to place text directly
 - [x] **ANOT-06**: Eraser with precision mode (exact area) and object mode (delete whole element)
-- [ ] **ANOT-07**: All annotations persist to disk across restarts
-- [ ] **ANOT-08**: Clear button with options: clear all, clear by type
+- [x] **ANOT-07**: All annotations persist to disk across restarts
+- [x] **ANOT-08**: Clear button with options: clear all, clear by type
 - [x] **ANOT-09**: Drawing toolbar shows brush, arrow, sticky, text, eraser tools
 
 ### System
@@ -112,8 +112,8 @@
 | ANOT-04 | Phase 10 | Complete |
 | ANOT-05 | Phase 10 | Complete |
 | ANOT-06 | Phase 9 | Complete |
-| ANOT-07 | Phase 10 | Pending |
-| ANOT-08 | Phase 10 | Pending |
+| ANOT-07 | Phase 10 | Complete |
+| ANOT-08 | Phase 10 | Complete |
 | ANOT-09 | Phase 9 | Complete |
 | SYST-01 | Phase 11 | Pending |
 | SYST-02 | Phase 5 | Complete |
