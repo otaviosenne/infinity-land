@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v0.51
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 09-01-PLAN.md
-last_updated: "2026-03-25T22:50:11.853Z"
+stopped_at: Completed 09-02-PLAN.md (checkpoint pending)
+last_updated: "2026-03-25T23:00:22.866Z"
 progress:
   total_phases: 11
-  completed_phases: 8
+  completed_phases: 9
   total_plans: 14
-  completed_plans: 13
+  completed_plans: 14
 ---
 
 # Project State
@@ -55,6 +55,7 @@ Plan: 2 of 2
 | Phase 08 P01 | 5min | 2 tasks | 6 files |
 | Phase 08 P02 | 5min | 2 tasks | 9 files |
 | Phase 09 P01 | 5min | 2 tasks | 9 files |
+| Phase 09 P02 | 8min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -77,6 +78,7 @@ Recent decisions affecting current work:
 - [Phase 08]: Window address as runtime key, appClass for persistence serialization
 - [Phase 09]: Cairo BGRA-to-RGBA swizzle for GL texture upload matching renderText pattern
 - [Phase 09]: Annotation renders after background, before layer surfaces in both render paths
+- [Phase 09]: TBTN_ prefix for toolbar button enum to avoid Linux input header BTN_TOOL_* macro conflicts
 
 ### Pending Todos
 
@@ -88,6 +90,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-25T22:50:11.849Z
-Stopped at: Completed 09-01-PLAN.md
+Last session: 2026-03-25T23:00:22.862Z
+Stopped at: Completed 09-02-PLAN.md (checkpoint pending)
 Resume file: None

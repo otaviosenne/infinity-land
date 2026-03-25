@@ -44,7 +44,7 @@
 - [x] **ANOT-06**: Eraser with precision mode (exact area) and object mode (delete whole element)
 - [ ] **ANOT-07**: All annotations persist to disk across restarts
 - [ ] **ANOT-08**: Clear button with options: clear all, clear by type
-- [ ] **ANOT-09**: Drawing toolbar shows brush, arrow, sticky, text, eraser tools
+- [x] **ANOT-09**: Drawing toolbar shows brush, arrow, sticky, text, eraser tools
 
 ### System
 
@@ -114,7 +114,7 @@
 | ANOT-06 | Phase 9 | Complete |
 | ANOT-07 | Phase 10 | Pending |
 | ANOT-08 | Phase 10 | Pending |
-| ANOT-09 | Phase 9 | Pending |
+| ANOT-09 | Phase 9 | Complete |
 | SYST-01 | Phase 11 | Pending |
 | SYST-02 | Phase 5 | Complete |
 | SYST-03 | Phase 8 | Complete |
