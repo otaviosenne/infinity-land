@@ -63,11 +63,10 @@ Plans:
   2. User can drag windows freely with SUPER+left-click
   3. User can resize windows with SUPER+right-click
   4. New windows appear at center of current viewport with 1200x800 default size
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 03-01: TBD
-- [ ] 03-02: TBD
+- [ ] 03-01-PLAN.md — Override drag/resize in CCanvasLayout with canvas-space coordinate conversion
 
 ### Phase 4: Layer-Shell Compatibility
 **Goal**: Waybar, wofi, SwayNC, and all existing Hyprland config still work
@@ -199,7 +198,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 |-------|----------------|--------|-----------|
 | 1. Fork and Build | 0/? | Not started | - |
 | 2. Canvas Viewport | 1/2 | In Progress|  |
-| 3. Canvas Layout | 0/? | Not started | - |
+| 3. Canvas Layout | 0/1 | Not started | - |
 | 4. Layer-Shell Compatibility | 0/? | Not started | - |
 | 5. Canvas Background | 0/? | Not started | - |
 | 6. Persistence | 0/? | Not started | - |
