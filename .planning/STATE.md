@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v0.51
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 08-02-PLAN.md
-last_updated: "2026-03-25T22:36:19.415Z"
+stopped_at: Completed 09-01-PLAN.md
+last_updated: "2026-03-25T22:50:11.853Z"
 progress:
   total_phases: 11
   completed_phases: 8
-  total_plans: 12
-  completed_plans: 12
+  total_plans: 14
+  completed_plans: 13
 ---
 
 # Project State
@@ -19,11 +19,11 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** Every open window lives on one infinite canvas with real interaction
-**Current focus:** Phase 08 — window-organization
+**Current focus:** Phase 09 — annotation-foundation
 
 ## Current Position
 
-Phase: 08 (window-organization) — EXECUTING
+Phase: 09 (annotation-foundation) — EXECUTING
 Plan: 2 of 2
 
 ## Performance Metrics
@@ -54,6 +54,7 @@ Plan: 2 of 2
 | Phase 07 P02 | 8min | 1 tasks | 7 files |
 | Phase 08 P01 | 5min | 2 tasks | 6 files |
 | Phase 08 P02 | 5min | 2 tasks | 9 files |
+| Phase 09 P01 | 5min | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -74,6 +75,8 @@ Recent decisions affecting current work:
 - [Phase 07]: Key interception in InputManager for overlay text input
 - [Phase 08]: Free functions in CanvasSnap for layout algorithms separate from layout class
 - [Phase 08]: Window address as runtime key, appClass for persistence serialization
+- [Phase 09]: Cairo BGRA-to-RGBA swizzle for GL texture upload matching renderText pattern
+- [Phase 09]: Annotation renders after background, before layer surfaces in both render paths
 
 ### Pending Todos
 
@@ -85,6 +88,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-25T22:35:20.635Z
-Stopped at: Completed 08-02-PLAN.md
+Last session: 2026-03-25T22:50:11.849Z
+Stopped at: Completed 09-01-PLAN.md
 Resume file: None

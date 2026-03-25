@@ -36,12 +36,12 @@
 
 ### Annotations
 
-- [ ] **ANOT-01**: User can activate drawing mode via button (bottom-right corner)
-- [ ] **ANOT-02**: Freehand brush with color picker and thickness adjustment
+- [x] **ANOT-01**: User can activate drawing mode via button (bottom-right corner)
+- [x] **ANOT-02**: Freehand brush with color picker and thickness adjustment
 - [ ] **ANOT-03**: Arrow/connector tool between windows or arbitrary points
 - [ ] **ANOT-04**: Sticky note tool — floating text notes on the canvas
 - [ ] **ANOT-05**: Text tool — click canvas to place text directly
-- [ ] **ANOT-06**: Eraser with precision mode (exact area) and object mode (delete whole element)
+- [x] **ANOT-06**: Eraser with precision mode (exact area) and object mode (delete whole element)
 - [ ] **ANOT-07**: All annotations persist to disk across restarts
 - [ ] **ANOT-08**: Clear button with options: clear all, clear by type
 - [ ] **ANOT-09**: Drawing toolbar shows brush, arrow, sticky, text, eraser tools
@@ -106,12 +106,12 @@
 | NAVG-01 | Phase 7 | Complete |
 | NAVG-02 | Phase 7 | Complete |
 | NAVG-03 | Phase 7 | Complete |
-| ANOT-01 | Phase 9 | Pending |
-| ANOT-02 | Phase 9 | Pending |
+| ANOT-01 | Phase 9 | Complete |
+| ANOT-02 | Phase 9 | Complete |
 | ANOT-03 | Phase 10 | Pending |
 | ANOT-04 | Phase 10 | Pending |
 | ANOT-05 | Phase 10 | Pending |
-| ANOT-06 | Phase 9 | Pending |
+| ANOT-06 | Phase 9 | Complete |
 | ANOT-07 | Phase 10 | Pending |
 | ANOT-08 | Phase 10 | Pending |
 | ANOT-09 | Phase 9 | Pending |
