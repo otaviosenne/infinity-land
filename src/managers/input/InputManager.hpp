@@ -235,6 +235,11 @@ class CInputManager {
     eClickBehaviorMode m_clickBehavior        = CLICKMODE_DEFAULT;
     Vector2D           m_lastCursorPosFloored = Vector2D();
 
+    bool               m_canvasPanning        = false;
+    Vector2D           m_canvasPanLastPos     = {};
+
+    bool               isCanvasLayoutActive() const;
+
     void               setupKeyboard(SP<IKeyboard> keeb);
     void               setupMouse(SP<IPointer> mauz);
 

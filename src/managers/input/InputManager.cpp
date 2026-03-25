@@ -38,6 +38,7 @@
 #include "../../managers/EventManager.hpp"
 #include "../../managers/LayoutManager.hpp"
 #include "../../managers/permissions/DynamicPermissionManager.hpp"
+#include "../../canvas/CanvasViewport.hpp"
 
 #include "../../helpers/time/Time.hpp"
 #include "../../helpers/MiscFunctions.hpp"
@@ -92,6 +93,10 @@ CInputManager::~CInputManager() {
     m_tabletPads.clear();
     m_idleInhibitors.clear();
     m_switches.clear();
+}
+
+bool CInputManager::isCanvasLayoutActive() const {
+    return g_pLayoutManager->getCurrentLayout()->getLayoutName() == "canvas";
 }
 
 void CInputManager::onMouseMoved(IPointer::SMotionEvent e) {
@@ -169,6 +174,14 @@ void CInputManager::sendMotionEventsToFocused() {
 
 void CInputManager::mouseMoveUnified(uint32_t time, bool refocus, bool mouse, std::optional<Vector2D> overridePos) {
     m_lastInputMouse = mouse;
+
+    if (m_canvasPanning && g_pCanvasViewport) {
+        const auto currentPos = g_pPointerManager->position();
+        const auto delta = currentPos - m_canvasPanLastPos;
+        g_pCanvasViewport->pan(delta);
+        m_canvasPanLastPos = currentPos;
+        return;
+    }
 
     if (!g_pCompositor->m_readyToProcess || g_pCompositor->m_isShuttingDown || g_pCompositor->m_unsafeState)
         return;
@@ -613,6 +626,17 @@ void CInputManager::mouseMoveUnified(uint32_t time, bool refocus, bool mouse, st
 void CInputManager::onMouseButton(IPointer::SButtonEvent e) {
     EMIT_HOOK_EVENT_CANCELLABLE("mouseButton", e);
 
+    if (isCanvasLayoutActive() && g_pCanvasViewport && e.button == 0x112) {
+        if (e.state == WL_POINTER_BUTTON_STATE_PRESSED) {
+            m_canvasPanning = true;
+            m_canvasPanLastPos = g_pPointerManager->position();
+            return;
+        } else {
+            m_canvasPanning = false;
+            return;
+        }
+    }
+
     if (e.mouse)
         recheckMouseWarpOnMouseInput();
 
@@ -836,6 +860,13 @@ void CInputManager::processMouseDownKill(const IPointer::SButtonEvent& e) {
 }
 
 void CInputManager::onMouseWheel(IPointer::SAxisEvent e, SP<IPointer> pointer) {
+    if (isCanvasLayoutActive() && g_pCanvasViewport) {
+        const double zoomStep = 1.1;
+        const double factor = (e.delta < 0) ? zoomStep : (1.0 / zoomStep);
+        g_pCanvasViewport->zoom(factor, g_pPointerManager->position());
+        return;
+    }
+
     static auto POFFWINDOWAXIS        = CConfigValue<Hyprlang::INT>("input:off_window_axis_events");
     static auto PINPUTSCROLLFACTOR    = CConfigValue<Hyprlang::FLOAT>("input:scroll_factor");
     static auto PTOUCHPADSCROLLFACTOR = CConfigValue<Hyprlang::FLOAT>("input:touchpad:scroll_factor");
