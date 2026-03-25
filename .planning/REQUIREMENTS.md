@@ -32,7 +32,7 @@
 
 - [x] **NAVG-01**: Minimap in corner shows overview of all windows on canvas
 - [x] **NAVG-02**: User can click minimap to jump to that area of the canvas
-- [ ] **NAVG-03**: User can search windows by name and jump to them via keybind
+- [x] **NAVG-03**: User can search windows by name and jump to them via keybind
 
 ### Annotations
 
@@ -105,7 +105,7 @@
 | WNDW-10 | Phase 3 | Pending |
 | NAVG-01 | Phase 7 | Complete |
 | NAVG-02 | Phase 7 | Complete |
-| NAVG-03 | Phase 7 | Pending |
+| NAVG-03 | Phase 7 | Complete |
 | ANOT-01 | Phase 9 | Pending |
 | ANOT-02 | Phase 9 | Pending |
 | ANOT-03 | Phase 10 | Pending |
