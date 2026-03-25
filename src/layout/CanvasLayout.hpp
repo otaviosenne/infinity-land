@@ -21,10 +21,23 @@ class CCanvasLayout : public IHyprLayout {
     std::string              getLayoutName() override;
     void                     replaceWindowDataWith(PHLWINDOW from, PHLWINDOW to) override;
     Vector2D                 predictSizeForNewWindowTiled() override;
+    void                     onBeginDragWindow() override;
+    void                     onEndDragWindow() override;
+    void                     onMouseMove(const Vector2D&) override;
+    void                     moveActiveWindow(const Vector2D&, PHLWINDOW pWindow = nullptr) override;
 
   private:
     std::vector<PHLWINDOWREF> m_windows;
 
-    static constexpr int DEFAULT_WIDTH  = 1200;
-    static constexpr int DEFAULT_HEIGHT = 800;
+    Vector2D    m_canvasDragStartPos;
+    Vector2D    m_canvasDragStartSize;
+    Vector2D    m_dragStartMousePos;
+    eRectCorner m_dragCorner = CORNER_TOPLEFT;
+
+    eRectCorner determineDragCorner(const Vector2D& mousePos, const CBox& windowBox) const;
+
+    static constexpr int     DEFAULT_WIDTH      = 1200;
+    static constexpr int     DEFAULT_HEIGHT     = 800;
+    static constexpr double  MIN_WINDOW_WIDTH   = 200;
+    static constexpr double  MIN_WINDOW_HEIGHT  = 150;
 };
