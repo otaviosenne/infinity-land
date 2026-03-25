@@ -31,14 +31,13 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Depends on**: Nothing (first phase)
 **Requirements**: (foundation -- no user-facing requirements, enables all others)
 **Success Criteria** (what must be TRUE):
-  1. `meson build && ninja -C build` produces a working compositor binary
+  1. `cmake -B build -G Ninja && cmake --build build` produces a working compositor binary
   2. Compositor launches inside existing Hyprland session via `AQUAMARINE_BACKEND=wayland`
   3. A terminal window opens and is interactive inside the nested compositor
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
+- [ ] 01-01-PLAN.md — Verify build system and nested compositor workflow
 
 ### Phase 2: Canvas Viewport
 **Goal**: User can pan and zoom an infinite canvas that spans both monitors
