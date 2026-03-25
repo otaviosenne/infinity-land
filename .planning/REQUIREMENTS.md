@@ -25,7 +25,7 @@
 - [x] **WNDW-06**: Window remembers its last size per app class across restarts
 - [x] **WNDW-07**: User can maximize a window via zoom-to-fit (canvas zooms until window fills screen)
 - [x] **WNDW-08**: User can snap selected windows into grid layout via keybind
-- [ ] **WNDW-09**: User can assign color tags to windows for visual organization
+- [x] **WNDW-09**: User can assign color tags to windows for visual organization
 - [ ] **WNDW-10**: All windows render as real interactive Wayland surfaces (not thumbnails)
 
 ### Navigation
@@ -50,7 +50,7 @@
 
 - [ ] **SYST-01**: Full undo/redo stack across all actions (Ctrl+Z / Ctrl+Shift+Z)
 - [x] **SYST-02**: Dark and light theme with toggle button
-- [ ] **SYST-03**: Workspace views filter which windows are visible on the canvas
+- [x] **SYST-03**: Workspace views filter which windows are visible on the canvas
 - [ ] **SYST-04**: Waybar, wofi, SwayNC, and layer-shell apps work normally (excluded from canvas transform)
 - [ ] **SYST-05**: All existing Hyprland keybindings and window rules still function
 - [ ] **SYST-06**: Smooth zoom animations at 60fps with 15+ windows on AMD RX 590
@@ -101,7 +101,7 @@
 | WNDW-06 | Phase 6 | Complete |
 | WNDW-07 | Phase 7 | Complete |
 | WNDW-08 | Phase 8 | Complete |
-| WNDW-09 | Phase 8 | Pending |
+| WNDW-09 | Phase 8 | Complete |
 | WNDW-10 | Phase 3 | Pending |
 | NAVG-01 | Phase 7 | Complete |
 | NAVG-02 | Phase 7 | Complete |
@@ -117,7 +117,7 @@
 | ANOT-09 | Phase 9 | Pending |
 | SYST-01 | Phase 11 | Pending |
 | SYST-02 | Phase 5 | Complete |
-| SYST-03 | Phase 8 | Pending |
+| SYST-03 | Phase 8 | Complete |
 | SYST-04 | Phase 4 | Pending |
 | SYST-05 | Phase 4 | Pending |
 | SYST-06 | Phase 11 | Pending |
