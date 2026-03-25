@@ -149,11 +149,11 @@ Plans:
   2. User can draw freehand strokes with configurable color and thickness
   3. Toolbar shows brush, arrow, sticky, text, and eraser tool buttons
   4. Eraser works in precision mode (area) and object mode (whole element)
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 09-01: TBD
-- [ ] 09-02: TBD
+- [ ] 09-01-PLAN.md — Annotation data model, Cairo rendering, draw mode with brush and eraser
+- [ ] 09-02-PLAN.md — Drawing toolbar overlay with tool, color, and thickness selection
 
 ### Phase 10: Annotation Extended
 **Goal**: User can place arrows, sticky notes, text, and all annotations persist
@@ -165,7 +165,7 @@ Plans:
   3. User can click the canvas to place text directly
   4. All annotations persist to disk and survive restarts
   5. Clear button offers options to clear all annotations or clear by type
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
 - [ ] 10-01: TBD
@@ -180,7 +180,7 @@ Plans:
   2. Ctrl+Shift+Z redoes the last undone action
   3. Undo/redo works across window actions and annotation actions
   4. Pan/zoom with 15+ open windows maintains 60fps on AMD RX 590
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
 - [ ] 11-01: TBD
