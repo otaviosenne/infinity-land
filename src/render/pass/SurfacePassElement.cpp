@@ -1,5 +1,6 @@
 #include "SurfacePassElement.hpp"
 #include "../OpenGL.hpp"
+#include "../../canvas/CanvasViewport.hpp"
 #include "../../desktop/WLSurface.hpp"
 #include "../../desktop/Window.hpp"
 #include "../../protocols/core/Compositor.hpp"
@@ -178,10 +179,11 @@ CBox CSurfacePassElement::getTexBox() {
             const auto SIZE    = PSURFACE->getViewporterCorrectedSize();
 
             if (!INTERACTIVERESIZEINPROGRESS) {
-                windowBox.translate(CORRECT);
+                const double canvasScale = (g_pCanvasViewport && !PWINDOW->m_pinned) ? g_pCanvasViewport->scale() : 1.0;
+                windowBox.translate(CORRECT * canvasScale);
 
-                windowBox.width  = SIZE.x * (PWINDOW->m_realSize->value().x / PWINDOW->m_reportedSize.x);
-                windowBox.height = SIZE.y * (PWINDOW->m_realSize->value().y / PWINDOW->m_reportedSize.y);
+                windowBox.width  = SIZE.x * (PWINDOW->m_realSize->value().x / PWINDOW->m_reportedSize.x) * canvasScale;
+                windowBox.height = SIZE.y * (PWINDOW->m_realSize->value().y / PWINDOW->m_reportedSize.y) * canvasScale;
             } else {
                 windowBox.width  = SIZE.x;
                 windowBox.height = SIZE.y;
@@ -189,12 +191,12 @@ CBox CSurfacePassElement::getTexBox() {
         }
 
     } else { //  here we clamp to 2, these might be some tiny specks
-        windowBox = {sc<int>(outputX) + m_data.pos.x + m_data.localPos.x, sc<int>(outputY) + m_data.pos.y + m_data.localPos.y,
-                     std::max(sc<float>(m_data.surface->m_current.size.x), 2.F), std::max(sc<float>(m_data.surface->m_current.size.y), 2.F)};
+        const double subsurfScale = (m_data.pWindow && g_pCanvasViewport && !m_data.pWindow->m_pinned) ? g_pCanvasViewport->scale() : 1.0;
+        windowBox = {sc<int>(outputX) + m_data.pos.x + m_data.localPos.x * subsurfScale, sc<int>(outputY) + m_data.pos.y + m_data.localPos.y * subsurfScale,
+                     std::max(sc<float>(m_data.surface->m_current.size.x * subsurfScale), 2.F), std::max(sc<float>(m_data.surface->m_current.size.y * subsurfScale), 2.F)};
         if (m_data.pWindow && m_data.pWindow->m_realSize->isBeingAnimated() && m_data.surface && !m_data.mainSurface && m_data.squishOversized /* subsurface */) {
-            // adjust subsurfaces to the window
-            windowBox.width  = (windowBox.width / m_data.pWindow->m_reportedSize.x) * m_data.pWindow->m_realSize->value().x;
-            windowBox.height = (windowBox.height / m_data.pWindow->m_reportedSize.y) * m_data.pWindow->m_realSize->value().y;
+            windowBox.width  = (windowBox.width / m_data.pWindow->m_reportedSize.x) * m_data.pWindow->m_realSize->value().x * subsurfScale;
+            windowBox.height = (windowBox.height / m_data.pWindow->m_reportedSize.y) * m_data.pWindow->m_realSize->value().y * subsurfScale;
         }
     }
 
