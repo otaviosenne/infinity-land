@@ -66,14 +66,24 @@ Vector2D CCanvasMinimap::canvasToMinimap(const Vector2D& canvasPos, const CBox& 
 
 void CCanvasMinimap::render(PHLMONITOR pMonitor, const CRegion& damage) {
     const auto canvasBBox  = canvasBounds();
-    if (canvasBBox.w <= 0 || canvasBBox.h <= 0)
-        return;
-
     const auto mmBox = minimapScreenBox(pMonitor);
 
     CMinimapPassElement::SMinimapData mmData;
 
     mmData.rects.push_back({mmBox, CHyprColor(0.1, 0.1, 0.1, 0.7), 6});
+
+    if (canvasBBox.w <= 0 || canvasBBox.h <= 0) {
+        const double zoomPct = g_pCanvasViewport ? g_pCanvasViewport->scale() : 1.0;
+        const double barY = mmBox.y + mmBox.h + 6;
+        const double barW = mmBox.w;
+        const double barH = 4;
+        const double barX = mmBox.x;
+        mmData.rects.push_back({CBox{barX, barY, barW, barH}, CHyprColor(0.2, 0.2, 0.2, 0.6), 2});
+        const double fillRatio = std::clamp((zoomPct - 0.1) / 2.9, 0.0, 1.0);
+        mmData.rects.push_back({CBox{barX, barY, barW * fillRatio, barH}, CHyprColor(0.4, 0.6, 0.9, 0.9), 2});
+        g_pHyprRenderer->m_renderPass.add(makeUnique<CMinimapPassElement>(mmData));
+        return;
+    }
 
     for (const auto& w : g_pCompositor->m_windows) {
         if (w->isHidden() || !w->m_isMapped)
