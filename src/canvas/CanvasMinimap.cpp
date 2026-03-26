@@ -31,8 +31,8 @@ CBox CCanvasMinimap::canvasBounds() const {
 }
 
 CBox CCanvasMinimap::minimapScreenBox(PHLMONITOR pMonitor) const {
-    return {pMonitor->m_position.x + pMonitor->m_size.x - MINIMAP_WIDTH - MINIMAP_MARGIN,
-            pMonitor->m_position.y + pMonitor->m_size.y - MINIMAP_HEIGHT - MINIMAP_MARGIN,
+    return {pMonitor->m_size.x - MINIMAP_WIDTH - MINIMAP_MARGIN,
+            pMonitor->m_size.y - MINIMAP_HEIGHT - MINIMAP_MARGIN,
             MINIMAP_WIDTH, MINIMAP_HEIGHT};
 }
 

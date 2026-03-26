@@ -18,6 +18,7 @@ class CDotGridPassElement : public IPassElement {
     bool                needsPrecomputeBlur() override;
     const char*         passName() override;
     bool                disableSimplification() override;
+    std::optional<CBox> boundingBox() override;
 
   private:
     SDotGridData m_data;

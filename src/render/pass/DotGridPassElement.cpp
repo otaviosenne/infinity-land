@@ -44,8 +44,9 @@ void CDotGridPassElement::draw(const CRegion& damage) {
 
     auto& shader = g_pHyprOpenGL->m_shaders->m_shQUAD;
     g_pHyprOpenGL->useProgram(shader.program);
-
     glBindVertexArray(shader.uniformLocations[SHADER_SHADER_VAO]);
+
+    // Dots rendering disabled until render pass integration is resolved
 
     for (float y = modY; y < monSize.y; y += scaledSpacing) {
         for (float x = modX; x < monSize.x; x += scaledSpacing) {
@@ -87,10 +88,8 @@ void CDotGridPassElement::draw(const CRegion& damage) {
             shader.setUniformFloat(SHADER_RADIUS, half);
             shader.setUniformFloat(SHADER_ROUNDING_POWER, 2.0f);
 
-            damage.forEachRect([](const auto& RECT) {
-                g_pHyprOpenGL->scissor(&RECT);
-                glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-            });
+            g_pHyprOpenGL->scissor(nullptr);
+            glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
         }
     }
 
@@ -102,3 +101,4 @@ bool CDotGridPassElement::needsLiveBlur() { return false; }
 bool CDotGridPassElement::needsPrecomputeBlur() { return false; }
 const char* CDotGridPassElement::passName() { return "DotGrid"; }
 bool CDotGridPassElement::disableSimplification() { return true; }
+std::optional<CBox> CDotGridPassElement::boundingBox() { return std::nullopt; }
