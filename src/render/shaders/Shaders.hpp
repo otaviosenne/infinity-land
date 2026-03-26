@@ -55,7 +55,4 @@ static const std::map<std::string, std::string> SHADERS = {
 {"tex320.vert",
 #include "./tex320.vert.inc"
 },
-{"dotgrid.frag",
-#include "./dotgrid.frag.inc"
-},
 };

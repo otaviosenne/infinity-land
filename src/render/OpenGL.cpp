@@ -1061,17 +1061,6 @@ bool CHyprOpenGLImpl::initShaders() {
         shaders->m_shGLITCH.uniformLocations[SHADER_FULL_SIZE]  = glGetUniformLocation(prog, "screenSize");
         shaders->m_shGLITCH.createVao();
 
-        {
-            const auto DOTGRIDFRAGSRC = processShader("dotgrid.frag", includes);
-            prog = createProgram(shaders->TEXVERTSRC, DOTGRIDFRAGSRC, isDynamic);
-            if (!prog)
-                return false;
-            shaders->m_shDOTGRID.program = prog;
-            shaders->m_shDOTGRID.uniformLocations[SHADER_PROJ]       = glGetUniformLocation(prog, "proj");
-            shaders->m_shDOTGRID.uniformLocations[SHADER_POS_ATTRIB] = glGetAttribLocation(prog, "pos");
-            shaders->m_shDOTGRID.createVao();
-        }
-
         prog = createProgram(shaders->TEXVERTSRC, TEXFRAGSRCRGBX, isDynamic);
         if (!prog)
             return false;

@@ -26,6 +26,7 @@
 #include "../hyprerror/HyprError.hpp"
 #include "../canvas/CanvasBackground.hpp"
 #include "../canvas/CanvasTheme.hpp"
+#include "pass/DotGridPassElement.hpp"
 #include "../canvas/CanvasAnnotation.hpp"
 #include "../canvas/CanvasDrawMode.hpp"
 #include "../debug/HyprDebugOverlay.hpp"
@@ -938,11 +939,11 @@ void CHyprRenderer::renderAllClientsForWorkspace(PHLMONITOR pMonitor, PHLWORKSPA
         else
             g_pHyprOpenGL->clearWithTex(); // will apply the hypr "wallpaper"
 
-        // Canvas background: just clear with theme bg color (dots rendered later when GL is ready)
         if (g_pCanvasBackground) {
             const auto tc = g_pCanvasTheme ? g_pCanvasTheme->colors() : SCanvasThemeColors{
                 CHyprColor(0.102f, 0.102f, 0.180f, 1.0f), CHyprColor(0.216f, 0.255f, 0.318f, 1.0f), CHyprColor(0.612f, 0.639f, 0.686f, 1.0f)};
             m_renderPass.add(makeUnique<CClearPassElement>(CClearPassElement::SClearData{tc.bgColor}));
+            m_renderPass.add(makeUnique<CDotGridPassElement>(CDotGridPassElement::SDotGridData{pMonitor}));
         }
 
         if (g_pCanvasAnnotation)
@@ -984,11 +985,11 @@ void CHyprRenderer::renderAllClientsForWorkspace(PHLMONITOR pMonitor, PHLWORKSPA
         else if (!g_pCanvasBackground)
             g_pHyprOpenGL->clearWithTex(); // will apply the hypr "wallpaper"
 
-        // Canvas background: just clear with theme bg color (dots rendered later when GL is ready)
         if (g_pCanvasBackground) {
             const auto tc = g_pCanvasTheme ? g_pCanvasTheme->colors() : SCanvasThemeColors{
                 CHyprColor(0.102f, 0.102f, 0.180f, 1.0f), CHyprColor(0.216f, 0.255f, 0.318f, 1.0f), CHyprColor(0.612f, 0.639f, 0.686f, 1.0f)};
             m_renderPass.add(makeUnique<CClearPassElement>(CClearPassElement::SClearData{tc.bgColor}));
+            m_renderPass.add(makeUnique<CDotGridPassElement>(CDotGridPassElement::SDotGridData{pMonitor}));
         }
 
         if (g_pCanvasAnnotation)
