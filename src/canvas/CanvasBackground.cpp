@@ -4,24 +4,25 @@
 #include "../render/OpenGL.hpp"
 #include "../managers/PointerManager.hpp"
 #include "../render/Renderer.hpp"
+#include "../Compositor.hpp"
 
-static constexpr float BASE_GRID_SPACING = 20.0f;
+static constexpr float BASE_GRID_SPACING = 40.0f;
 static constexpr float LOW_ZOOM_THRESHOLD = 0.4f;
-static constexpr float DOT_RADIUS = 1.5f;
-static constexpr float GLOW_RADIUS = 130.0f;
-static constexpr float GLOW_DOT_RADIUS = 2.0f;
-static constexpr float GLOW_DAMAGE_SIZE = 300.0f;
+static constexpr float DOT_SIZE = 2.0f;
+static constexpr float GLOW_RADIUS = 120.0f;
+static constexpr float GLOW_DOT_SIZE = 3.0f;
+static constexpr float MIN_VISIBLE_SPACING = 8.0f;
+static constexpr int MAX_DOTS_PER_AXIS = 120;
 
 void CCanvasBackground::render(PHLMONITOR pMonitor, const CRegion& damage) {
     if (!g_pCanvasViewport || !g_pHyprOpenGL)
         return;
 
-    const auto scale = static_cast<float>(g_pCanvasViewport->scale());
+    const double canvasScale = g_pCanvasViewport->scale();
     const auto offset = g_pCanvasViewport->offset();
     const auto monSize = pMonitor->m_transformedSize;
-    const float spacing = gridSpacingForScale(scale);
-
-    auto& shader = g_pHyprOpenGL->m_shaders->m_shDOTGRID;
+    const float gridSpacing = gridSpacingForScale(canvasScale);
+    const float scaledSpacing = gridSpacing * canvasScale;
 
     const auto themeColors = g_pCanvasTheme ? g_pCanvasTheme->colors() : SCanvasThemeColors{
         CHyprColor(0.102f, 0.102f, 0.180f, 1.0f),
@@ -29,55 +30,47 @@ void CCanvasBackground::render(PHLMONITOR pMonitor, const CRegion& damage) {
         CHyprColor(0.612f, 0.639f, 0.686f, 1.0f),
     };
 
-    CBox fullBox = {0, 0, monSize.x, monSize.y};
-    Mat3x3 matrix = g_pHyprOpenGL->m_renderData.monitorProjection.projectBox(
-        fullBox, wlTransformToHyprutils(WL_OUTPUT_TRANSFORM_NORMAL), 0);
-    Mat3x3 glMatrix = g_pHyprOpenGL->m_renderData.projection.copy().multiply(matrix);
+    g_pHyprOpenGL->renderRect(CBox{0, 0, monSize.x, monSize.y}, themeColors.bgColor, {});
 
-    g_pHyprOpenGL->useProgram(shader.program);
-    shader.setUniformMatrix3fv(SHADER_PROJ, 1, GL_TRUE, glMatrix.getMatrix());
+    if (scaledSpacing < MIN_VISIBLE_SPACING)
+        return;
 
-    glUniform2f(glGetUniformLocation(shader.program, "u_resolution"),
-        monSize.x, monSize.y);
-    glUniform2f(glGetUniformLocation(shader.program, "u_canvasOffset"),
-        static_cast<float>(offset.x), static_cast<float>(offset.y));
-    glUniform1f(glGetUniformLocation(shader.program, "u_canvasScale"), scale);
-    glUniform1f(glGetUniformLocation(shader.program, "u_gridSpacing"), spacing);
-    glUniform1f(glGetUniformLocation(shader.program, "u_dotRadius"), DOT_RADIUS);
+    const auto cursorPos = g_pPointerManager->position() - pMonitor->m_position;
 
-    glUniform4f(glGetUniformLocation(shader.program, "u_dotColor"),
-        static_cast<float>(themeColors.dotColor.r), static_cast<float>(themeColors.dotColor.g),
-        static_cast<float>(themeColors.dotColor.b), 1.0f);
-    glUniform4f(glGetUniformLocation(shader.program, "u_bgColor"),
-        static_cast<float>(themeColors.bgColor.r), static_cast<float>(themeColors.bgColor.g),
-        static_cast<float>(themeColors.bgColor.b), 1.0f);
+    const float modX = fmod(fmod(offset.x, (double)scaledSpacing) + scaledSpacing, (double)scaledSpacing);
+    const float modY = fmod(fmod(offset.y, (double)scaledSpacing) + scaledSpacing, (double)scaledSpacing);
 
-    const auto cursorGlobal = g_pPointerManager->position();
-    const auto cursorLocal = cursorGlobal - pMonitor->m_position;
-    const float cursorY = monSize.y - static_cast<float>(cursorLocal.y);
+    const int dotsX = std::min(MAX_DOTS_PER_AXIS, static_cast<int>(monSize.x / scaledSpacing) + 2);
+    const int dotsY = std::min(MAX_DOTS_PER_AXIS, static_cast<int>(monSize.y / scaledSpacing) + 2);
 
-    glUniform2f(glGetUniformLocation(shader.program, "u_cursorPos"),
-        static_cast<float>(cursorLocal.x), cursorY);
-    glUniform1f(glGetUniformLocation(shader.program, "u_glowRadius"), GLOW_RADIUS);
-    glUniform4f(glGetUniformLocation(shader.program, "u_glowDotColor"),
-        static_cast<float>(themeColors.glowDotColor.r), static_cast<float>(themeColors.glowDotColor.g),
-        static_cast<float>(themeColors.glowDotColor.b), 1.0f);
-    glUniform1f(glGetUniformLocation(shader.program, "u_glowDotRadius"), GLOW_DOT_RADIUS);
+    for (int iy = 0; iy < dotsY; ++iy) {
+        const float y = modY + iy * scaledSpacing;
+        if (y >= monSize.y) break;
 
-    glBindVertexArray(shader.uniformLocations[SHADER_SHADER_VAO]);
+        for (int ix = 0; ix < dotsX; ++ix) {
+            const float x = modX + ix * scaledSpacing;
+            if (x >= monSize.x) break;
 
-    damage.forEachRect([](const auto& RECT) {
-        g_pHyprOpenGL->scissor(&RECT);
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    });
+            const float dx = x - cursorPos.x;
+            const float dy = y - cursorPos.y;
+            const float distSq = dx * dx + dy * dy;
+            const float glowRadSq = GLOW_RADIUS * GLOW_RADIUS;
 
-    glBindVertexArray(0);
-    g_pHyprOpenGL->scissor(nullptr);
+            float dotSize = DOT_SIZE;
+            CHyprColor dotColor = themeColors.dotColor;
 
-    const float halfDamage = GLOW_DAMAGE_SIZE / 2.0f;
-    CBox glowArea = {cursorGlobal.x - halfDamage, cursorGlobal.y - halfDamage,
-        GLOW_DAMAGE_SIZE, GLOW_DAMAGE_SIZE};
-    g_pHyprRenderer->damageBox(glowArea);
+            if (distSq < glowRadSq) {
+                const float glowFactor = 1.0f - sqrt(distSq) / GLOW_RADIUS;
+                dotSize += (GLOW_DOT_SIZE - DOT_SIZE) * glowFactor;
+                dotColor.r += (themeColors.glowDotColor.r - dotColor.r) * glowFactor;
+                dotColor.g += (themeColors.glowDotColor.g - dotColor.g) * glowFactor;
+                dotColor.b += (themeColors.glowDotColor.b - dotColor.b) * glowFactor;
+            }
+
+            const float half = dotSize / 2.0f;
+            g_pHyprOpenGL->renderRect(CBox{x - half, y - half, dotSize, dotSize}, dotColor, {});
+        }
+    }
 }
 
 float CCanvasBackground::gridSpacingForScale(double scale) const {

@@ -37,12 +37,16 @@ void CCanvasLayout::onWindowCreatedTiling(PHLWINDOW pWindow, eDirection) {
         pos  = saved->position;
         size = saved->size;
     } else {
-        const auto PMONITOR     = g_pCompositor->getMonitorFromID(pWindow->monitorID());
-        const auto screenCenter = PMONITOR->m_position + PMONITOR->m_size / 2.0;
+        const auto appDefault = g_pCanvasPersistence->getAppDefault(appClass);
+        const auto PMONITOR   = g_pCompositor->getMonitorFromID(pWindow->monitorID());
+        const auto monSize    = PMONITOR->m_size;
+
+        size.x = std::min(appDefault.size.x, monSize.x * 0.85);
+        size.y = std::min(appDefault.size.y, monSize.y * 0.85);
+
+        const auto screenCenter = PMONITOR->m_position + monSize / 2.0;
         const auto canvasCenter = g_pCanvasViewport->screenToCanvas(screenCenter);
-        const auto appDefault   = g_pCanvasPersistence->getAppDefault(appClass);
-        size = appDefault.size;
-        pos  = canvasCenter - size / 2.0;
+        pos = canvasCenter - size / 2.0;
     }
 
     pWindow->m_position      = pos;
