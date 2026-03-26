@@ -46,12 +46,13 @@ void CDotGridPassElement::draw(const CRegion& damage) {
     g_pHyprOpenGL->useProgram(shader.program);
     glBindVertexArray(shader.uniformLocations[SHADER_SHADER_VAO]);
 
-    // Dots rendering disabled until render pass integration is resolved
-
     for (float y = modY; y < monSize.y; y += scaledSpacing) {
         for (float x = modX; x < monSize.x; x += scaledSpacing) {
-            const float dx = x - cursorPos.x;
-            const float dy = y - cursorPos.y;
+            const float px = std::round(x);
+            const float py = std::round(y);
+
+            const float dx = px - cursorPos.x;
+            const float dy = py - cursorPos.y;
             const float distSq = dx * dx + dy * dy;
             const float glowRadSq = GLOW_RADIUS * GLOW_RADIUS;
 
@@ -67,7 +68,7 @@ void CDotGridPassElement::draw(const CRegion& damage) {
             }
 
             const float half = dotSz / 2.0f;
-            CBox dotBox = {x - half, y - half, dotSz, dotSz};
+            CBox dotBox = {px - half, py - half, dotSz, dotSz};
 
             Mat3x3 matrix = g_pHyprOpenGL->m_renderData.monitorProjection.projectBox(
                 dotBox, wlTransformToHyprutils(WL_OUTPUT_TRANSFORM_NORMAL), 0);
