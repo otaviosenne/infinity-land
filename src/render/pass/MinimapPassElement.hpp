@@ -13,6 +13,8 @@ class CMinimapPassElement : public IPassElement {
   public:
     struct SMinimapData {
         std::vector<SMinimapRect> rects;
+        std::string               zoomText;
+        Vector2D                  zoomTextPos;
     };
 
     CMinimapPassElement(const SMinimapData& data);

@@ -880,7 +880,7 @@ void CInputManager::processMouseDownKill(const IPointer::SButtonEvent& e) {
 void CInputManager::onMouseWheel(IPointer::SAxisEvent e, SP<IPointer> pointer) {
     if (isCanvasLayoutActive() && g_pCanvasViewport) {
         const double zoomStep = 1.1;
-        const double factor = (e.delta > 0) ? zoomStep : (1.0 / zoomStep);
+        const double factor = (e.delta < 0) ? zoomStep : (1.0 / zoomStep);
         g_pCanvasViewport->zoom(factor, g_pPointerManager->position());
         return;
     }

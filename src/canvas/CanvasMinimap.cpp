@@ -88,6 +88,18 @@ void CCanvasMinimap::render(PHLMONITOR pMonitor, const CRegion& damage) {
         CBox{mmTopLeft.x, mmTopLeft.y, mmBottomRight.x - mmTopLeft.x, mmBottomRight.y - mmTopLeft.y},
         CHyprColor(1.0, 1.0, 1.0, 0.3), 1});
 
+    const double zoomPct = g_pCanvasViewport->scale();
+    const double barY = mmBox.y + mmBox.h + 6;
+    const double barW = mmBox.w;
+    const double barH = 4;
+    const double barX = mmBox.x;
+
+    mmData.rects.push_back({CBox{barX, barY, barW, barH}, CHyprColor(0.2, 0.2, 0.2, 0.6), 2});
+
+    const double fillRatio = std::clamp((zoomPct - 0.1) / 2.9, 0.0, 1.0);
+    const double fillW = barW * fillRatio;
+    mmData.rects.push_back({CBox{barX, barY, fillW, barH}, CHyprColor(0.4, 0.6, 0.9, 0.9), 2});
+
     g_pHyprRenderer->m_renderPass.add(makeUnique<CMinimapPassElement>(mmData));
 }
 
