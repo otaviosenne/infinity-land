@@ -163,10 +163,9 @@ void CCursorManager::setCursorFromName(const std::string& name) {
     static auto PUSEHYPRCURSOR = CConfigValue<Hyprlang::INT>("cursor:enable_hyprcursor");
 
     auto        setXCursor = [this](auto const& name) {
-        float scale = std::ceil(m_cursorScale);
-
         auto  xcursor = m_xcursor->getShape(name, m_size, m_cursorScale);
         auto& icon    = xcursor->images.front();
+        float scale   = icon.size.x > 0 ? icon.size.x / (float)m_size : std::ceil(m_cursorScale);
         auto  buf     = makeShared<CCursorBuffer>(rc<uint8_t*>(icon.pixels.data()), icon.size, icon.hotspot);
         setCursorBuffer(buf, icon.hotspot / scale, scale);
 
@@ -236,8 +235,8 @@ void CCursorManager::tickAnimatedCursor() {
         if (sc<size_t>(m_currentAnimationFrame) >= m_currentXcursor->images.size())
             m_currentAnimationFrame = 0;
 
-        float scale = std::ceil(m_cursorScale);
         auto& icon  = m_currentXcursor->images.at(m_currentAnimationFrame);
+        float scale = icon.size.x > 0 ? icon.size.x / (float)m_size : std::ceil(m_cursorScale);
         auto  buf   = makeShared<CCursorBuffer>(rc<uint8_t*>(icon.pixels.data()), icon.size, icon.hotspot);
         setCursorBuffer(buf, icon.hotspot / scale, scale);
         setAnimationTimer(m_currentAnimationFrame, m_currentXcursor->images[m_currentAnimationFrame].delay);
