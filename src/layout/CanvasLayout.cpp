@@ -33,20 +33,27 @@ void CCanvasLayout::onWindowCreatedTiling(PHLWINDOW pWindow, eDirection) {
 
     Vector2D pos, size;
 
-    if (saved.has_value()) {
-        pos  = saved->position;
-        size = saved->size;
-    } else {
+    {
         const auto appDefault = g_pCanvasPersistence->getAppDefault(appClass);
         const auto PMONITOR   = g_pCompositor->getMonitorFromID(pWindow->monitorID());
         const auto monSize    = PMONITOR->m_size;
 
-        size.x = std::min(appDefault.size.x, monSize.x * 0.85);
-        size.y = std::min(appDefault.size.y, monSize.y * 0.85);
+        const auto savedSize = saved.has_value() ? saved->size : appDefault.size;
+        size.x = std::min(savedSize.x, monSize.x * 0.85);
+        size.y = std::min(savedSize.y, monSize.y * 0.85);
 
         const auto screenCenter = PMONITOR->m_position + monSize / 2.0;
         const auto canvasCenter = g_pCanvasViewport->screenToCanvas(screenCenter);
         pos = canvasCenter - size / 2.0;
+
+        std::vector<CBox> otherBoxes;
+        for (const auto& ref : m_windows) {
+            const auto w = ref.lock();
+            if (!w)
+                continue;
+            otherBoxes.emplace_back(CBox{w->m_position.x, w->m_position.y, w->m_size.x, w->m_size.y});
+        }
+        pos = resolveOverlap(pos, size, otherBoxes);
     }
 
     pWindow->m_position      = pos;
