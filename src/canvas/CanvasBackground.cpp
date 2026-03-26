@@ -23,6 +23,12 @@ void CCanvasBackground::render(PHLMONITOR pMonitor, const CRegion& damage) {
 
     auto& shader = g_pHyprOpenGL->m_shaders->m_shDOTGRID;
 
+    const auto themeColors = g_pCanvasTheme ? g_pCanvasTheme->colors() : SCanvasThemeColors{
+        CHyprColor(0.102f, 0.102f, 0.180f, 1.0f),
+        CHyprColor(0.216f, 0.255f, 0.318f, 1.0f),
+        CHyprColor(0.612f, 0.639f, 0.686f, 1.0f),
+    };
+
     CBox fullBox = {0, 0, monSize.x, monSize.y};
     Mat3x3 matrix = g_pHyprOpenGL->m_renderData.monitorProjection.projectBox(
         fullBox, wlTransformToHyprutils(WL_OUTPUT_TRANSFORM_NORMAL), 0);
@@ -38,12 +44,6 @@ void CCanvasBackground::render(PHLMONITOR pMonitor, const CRegion& damage) {
     glUniform1f(glGetUniformLocation(shader.program, "u_canvasScale"), scale);
     glUniform1f(glGetUniformLocation(shader.program, "u_gridSpacing"), spacing);
     glUniform1f(glGetUniformLocation(shader.program, "u_dotRadius"), DOT_RADIUS);
-
-    const auto themeColors = g_pCanvasTheme ? g_pCanvasTheme->colors() : SCanvasThemeColors{
-        CHyprColor(0.102f, 0.102f, 0.180f, 1.0f),
-        CHyprColor(0.216f, 0.255f, 0.318f, 1.0f),
-        CHyprColor(0.612f, 0.639f, 0.686f, 1.0f),
-    };
 
     glUniform4f(glGetUniformLocation(shader.program, "u_dotColor"),
         static_cast<float>(themeColors.dotColor.r), static_cast<float>(themeColors.dotColor.g),

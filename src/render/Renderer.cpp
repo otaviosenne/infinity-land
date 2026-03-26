@@ -976,11 +976,8 @@ void CHyprRenderer::renderAllClientsForWorkspace(PHLMONITOR pMonitor, PHLWORKSPA
     if (!*PXPMODE) {
         if (*PRENDERTEX /* inverted cfg flag */)
             m_renderPass.add(makeUnique<CClearPassElement>(CClearPassElement::SClearData{CHyprColor(*PBACKGROUNDCOLOR)}));
-        else
+        else if (!g_pCanvasBackground)
             g_pHyprOpenGL->clearWithTex(); // will apply the hypr "wallpaper"
-
-        if (g_pCanvasBackground)
-            g_pCanvasBackground->render(pMonitor, g_pHyprOpenGL->m_renderData.damage);
 
         if (g_pCanvasAnnotation)
             g_pCanvasAnnotation->render(pMonitor, g_pHyprOpenGL->m_renderData.damage);
