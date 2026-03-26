@@ -25,6 +25,16 @@ CBox CCanvasMinimap::canvasBounds() const {
     if (!found)
         return {0, 0, 0, 0};
 
+    const auto pMonitor = g_pCompositor->m_lastMonitor.lock();
+    if (pMonitor && g_pCanvasViewport) {
+        const auto vpTL = g_pCanvasViewport->screenToCanvas(pMonitor->m_position);
+        const auto vpBR = g_pCanvasViewport->screenToCanvas(pMonitor->m_position + pMonitor->m_size);
+        minX = std::min(minX, vpTL.x);
+        minY = std::min(minY, vpTL.y);
+        maxX = std::max(maxX, vpBR.x);
+        maxY = std::max(maxY, vpBR.y);
+    }
+
     return {minX - BOUNDS_PADDING, minY - BOUNDS_PADDING,
             (maxX - minX) + BOUNDS_PADDING * 2,
             (maxY - minY) + BOUNDS_PADDING * 2};
@@ -81,12 +91,21 @@ void CCanvasMinimap::render(PHLMONITOR pMonitor, const CRegion& damage) {
 
     const auto vpTopLeft     = g_pCanvasViewport->screenToCanvas(pMonitor->m_position);
     const auto vpBottomRight = g_pCanvasViewport->screenToCanvas(pMonitor->m_position + pMonitor->m_size);
-    const auto mmTopLeft     = canvasToMinimap(vpTopLeft, canvasBBox, mmBox);
-    const auto mmBottomRight = canvasToMinimap(vpBottomRight, canvasBBox, mmBox);
+    auto mmVpTL = canvasToMinimap(vpTopLeft, canvasBBox, mmBox);
+    auto mmVpBR = canvasToMinimap(vpBottomRight, canvasBBox, mmBox);
 
-    mmData.rects.push_back({
-        CBox{mmTopLeft.x, mmTopLeft.y, mmBottomRight.x - mmTopLeft.x, mmBottomRight.y - mmTopLeft.y},
-        CHyprColor(1.0, 1.0, 1.0, 0.3), 1});
+    mmVpTL.x = std::max(mmVpTL.x, mmBox.x);
+    mmVpTL.y = std::max(mmVpTL.y, mmBox.y);
+    mmVpBR.x = std::min(mmVpBR.x, mmBox.x + mmBox.w);
+    mmVpBR.y = std::min(mmVpBR.y, mmBox.y + mmBox.h);
+
+    const double vpW = mmVpBR.x - mmVpTL.x;
+    const double vpH = mmVpBR.y - mmVpTL.y;
+    if (vpW > 0 && vpH > 0) {
+        mmData.rects.push_back({
+            CBox{mmVpTL.x, mmVpTL.y, vpW, vpH},
+            CHyprColor(1.0, 1.0, 1.0, 0.2), 1});
+    }
 
     const double zoomPct = g_pCanvasViewport->scale();
     const double barY = mmBox.y + mmBox.h + 6;
