@@ -682,8 +682,6 @@ void CCompositor::initManagers(eManagersInitStage stage) {
 
             g_pConfigManager->init();
 
-            g_pLayoutManager->switchToLayout("canvas");
-
             Debug::log(LOG, "Creating the PointerManager!");
             g_pPointerManager = makeUnique<CPointerManager>();
 
