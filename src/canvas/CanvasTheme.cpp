@@ -2,9 +2,9 @@
 #include "CanvasViewport.hpp"
 
 const SCanvasThemeColors CCanvasTheme::DARK_COLORS = {
-    CHyprColor(0.102f, 0.102f, 0.180f, 1.0f),
-    CHyprColor(0.216f, 0.255f, 0.318f, 1.0f),
-    CHyprColor(0.612f, 0.639f, 0.686f, 1.0f),
+    CHyprColor(0.11f, 0.11f, 0.12f, 1.0f),
+    CHyprColor(0.25f, 0.25f, 0.27f, 1.0f),
+    CHyprColor(0.55f, 0.55f, 0.58f, 1.0f),
 };
 
 const SCanvasThemeColors CCanvasTheme::LIGHT_COLORS = {
