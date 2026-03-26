@@ -78,7 +78,16 @@ void CSurfacePassElement::draw(const CRegion& damage) {
         DELTALESSTHAN(windowBox.height, m_data.surface->m_current.bufferSize.y, 3) /* off by one-or-two */ &&
         (!m_data.pWindow || (!m_data.pWindow->m_realSize->isBeingAnimated() && !INTERACTIVERESIZEINPROGRESS)) /* not window or not animated/resizing */;
 
-    g_pHyprRenderer->calculateUVForSurface(m_data.pWindow, m_data.surface, m_data.pMonitor->m_self.lock(), m_data.mainSurface, windowBox.size(), PROJSIZEUNSCALED, MISALIGNEDFSV1);
+    auto uvProjSize = windowBox.size();
+    auto uvProjSizeUnscaled = PROJSIZEUNSCALED;
+    if (m_data.pWindow && g_pCanvasViewport && !m_data.pWindow->m_pinned && g_pCanvasViewport->scale() != 1.0) {
+        const auto canvasSize = m_data.pWindow->m_realSize->value();
+        if (canvasSize.x > 0 && canvasSize.y > 0) {
+            uvProjSize = canvasSize * m_data.pMonitor->m_scale;
+            uvProjSizeUnscaled = canvasSize;
+        }
+    }
+    g_pHyprRenderer->calculateUVForSurface(m_data.pWindow, m_data.surface, m_data.pMonitor->m_self.lock(), m_data.mainSurface, uvProjSize, uvProjSizeUnscaled, MISALIGNEDFSV1);
 
     auto cancelRender                      = false;
     g_pHyprOpenGL->m_renderData.clipRegion = visibleRegion(cancelRender);
