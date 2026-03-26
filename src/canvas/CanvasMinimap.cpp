@@ -1,7 +1,7 @@
 #include "CanvasMinimap.hpp"
 #include "CanvasViewport.hpp"
 #include "../Compositor.hpp"
-#include "../render/pass/RectPassElement.hpp"
+#include "../render/pass/MinimapPassElement.hpp"
 #include "../render/Renderer.hpp"
 
 CBox CCanvasMinimap::canvasBounds() const {
@@ -31,8 +31,9 @@ CBox CCanvasMinimap::canvasBounds() const {
 }
 
 CBox CCanvasMinimap::minimapScreenBox(PHLMONITOR pMonitor) const {
-    return {pMonitor->m_size.x - MINIMAP_WIDTH - MINIMAP_MARGIN,
-            pMonitor->m_size.y - MINIMAP_HEIGHT - MINIMAP_MARGIN,
+    const auto monSize = pMonitor->m_transformedSize;
+    return {monSize.x - MINIMAP_WIDTH - MINIMAP_MARGIN,
+            monSize.y - MINIMAP_HEIGHT - MINIMAP_MARGIN,
             MINIMAP_WIDTH, MINIMAP_HEIGHT};
 }
 
@@ -60,11 +61,9 @@ void CCanvasMinimap::render(PHLMONITOR pMonitor, const CRegion& damage) {
 
     const auto mmBox = minimapScreenBox(pMonitor);
 
-    CRectPassElement::SRectData bgData;
-    bgData.box   = mmBox;
-    bgData.color = CHyprColor(0.1, 0.1, 0.1, 0.7);
-    bgData.round = 6;
-    g_pHyprRenderer->m_renderPass.add(makeUnique<CRectPassElement>(bgData));
+    CMinimapPassElement::SMinimapData mmData;
+
+    mmData.rects.push_back({mmBox, CHyprColor(0.1, 0.1, 0.1, 0.7), 6});
 
     for (const auto& w : g_pCompositor->m_windows) {
         if (w->isHidden() || !w->m_isMapped)
@@ -75,11 +74,9 @@ void CCanvasMinimap::render(PHLMONITOR pMonitor, const CRegion& damage) {
         const auto topLeft     = canvasToMinimap(wPos, canvasBBox, mmBox);
         const auto bottomRight = canvasToMinimap(wPos + wSize, canvasBBox, mmBox);
 
-        CRectPassElement::SRectData winData;
-        winData.box   = CBox{topLeft.x, topLeft.y, bottomRight.x - topLeft.x, bottomRight.y - topLeft.y};
-        winData.color = CHyprColor(0.4, 0.6, 0.9, 0.8);
-        winData.round = 2;
-        g_pHyprRenderer->m_renderPass.add(makeUnique<CRectPassElement>(winData));
+        mmData.rects.push_back({
+            CBox{topLeft.x, topLeft.y, bottomRight.x - topLeft.x, bottomRight.y - topLeft.y},
+            CHyprColor(0.4, 0.6, 0.9, 0.8), 2});
     }
 
     const auto vpTopLeft     = g_pCanvasViewport->screenToCanvas(pMonitor->m_position);
@@ -87,11 +84,11 @@ void CCanvasMinimap::render(PHLMONITOR pMonitor, const CRegion& damage) {
     const auto mmTopLeft     = canvasToMinimap(vpTopLeft, canvasBBox, mmBox);
     const auto mmBottomRight = canvasToMinimap(vpBottomRight, canvasBBox, mmBox);
 
-    CRectPassElement::SRectData vpData;
-    vpData.box   = CBox{mmTopLeft.x, mmTopLeft.y, mmBottomRight.x - mmTopLeft.x, mmBottomRight.y - mmTopLeft.y};
-    vpData.color = CHyprColor(1.0, 1.0, 1.0, 0.3);
-    vpData.round = 1;
-    g_pHyprRenderer->m_renderPass.add(makeUnique<CRectPassElement>(vpData));
+    mmData.rects.push_back({
+        CBox{mmTopLeft.x, mmTopLeft.y, mmBottomRight.x - mmTopLeft.x, mmBottomRight.y - mmTopLeft.y},
+        CHyprColor(1.0, 1.0, 1.0, 0.3), 1});
+
+    g_pHyprRenderer->m_renderPass.add(makeUnique<CMinimapPassElement>(mmData));
 }
 
 bool CCanvasMinimap::handleClick(const Vector2D& screenPos) {
