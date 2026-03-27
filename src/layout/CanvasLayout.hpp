@@ -38,6 +38,7 @@ class CCanvasLayout : public IHyprLayout {
     bool        m_dragIsResize = false;
 
     eRectCorner determineDragCorner(const Vector2D& mousePos, const CBox& windowBox) const;
+    void        fitWindowToMonitor(PHLWINDOW pWindow);
 
     static constexpr int     DEFAULT_WIDTH      = 1200;
     static constexpr int     DEFAULT_HEIGHT     = 800;

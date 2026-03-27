@@ -114,8 +114,44 @@ void CCanvasLayout::fullscreenRequestForWindow(PHLWINDOW, eFullscreenMode, eFull
     //
 }
 
-std::any CCanvasLayout::layoutMessage(SLayoutMessageHeader, std::string) {
+std::any CCanvasLayout::layoutMessage(SLayoutMessageHeader header, std::string msg) {
+    if (msg == "fitmonitor" && header.pWindow)
+        fitWindowToMonitor(header.pWindow);
     return {};
+}
+
+void CCanvasLayout::fitWindowToMonitor(PHLWINDOW pWindow) {
+    if (!validMapped(pWindow))
+        return;
+
+    const auto PMONITOR = g_pCompositor->getMonitorFromID(pWindow->monitorID());
+    if (!PMONITOR)
+        return;
+
+    const auto scale   = g_pCanvasViewport->scale();
+    const auto newSize = PMONITOR->m_size / scale;
+    const auto origin  = g_pCanvasViewport->screenToCanvas(Vector2D{0, 0});
+
+    std::vector<CBox> otherBoxes;
+    for (const auto& ref : m_windows) {
+        const auto w = ref.lock();
+        if (!w || w == pWindow)
+            continue;
+        otherBoxes.emplace_back(CBox{w->m_position.x, w->m_position.y, w->m_size.x, w->m_size.y});
+    }
+
+    auto newPos = resolveOverlap(origin, newSize, otherBoxes);
+
+    pWindow->m_position = newPos;
+    pWindow->m_size     = newSize;
+    pWindow->m_realPosition->setValueAndWarp(newPos);
+    pWindow->m_realSize->setValueAndWarp(newSize);
+    pWindow->sendWindowSize();
+    pWindow->updateWindowDecos();
+
+    g_pCanvasPersistence->trackWindow(pWindow->m_initialClass, newPos, newSize);
+    g_pCanvasPersistence->scheduleSave();
+    g_pCanvasViewport->damageAllMonitors();
 }
 
 SWindowRenderLayoutHints CCanvasLayout::requestRenderHints(PHLWINDOW) {
