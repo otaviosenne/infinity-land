@@ -127,15 +127,20 @@ void CHyprBorderDecoration::damageEntire() {
     if (!validMapped(m_window))
         return;
 
-    auto       surfaceBox   = m_window->getWindowMainSurfaceBox();
-    const auto ROUNDING     = m_window->rounding();
-    const auto ROUNDINGSIZE = ROUNDING - M_SQRT1_2 * ROUNDING + 2;
-    const auto BORDERSIZE   = m_window->getRealBorderSize() + 1;
+    auto surfaceBox = m_window->getWindowMainSurfaceBox();
 
     const auto PWINDOWWORKSPACE = m_window->m_workspace;
     if (PWINDOWWORKSPACE && PWINDOWWORKSPACE->m_renderOffset->isBeingAnimated() && !m_window->m_pinned)
         surfaceBox.translate(PWINDOWWORKSPACE->m_renderOffset->value());
     surfaceBox.translate(m_window->m_floatingOffset);
+
+    if (g_pCanvasViewport && !m_window->m_pinned)
+        surfaceBox = g_pCanvasViewport->canvasToScreen(surfaceBox);
+
+    const auto viewportScale  = (g_pCanvasViewport && !m_window->m_pinned) ? g_pCanvasViewport->scale() : 1.0;
+    const auto ROUNDING       = m_window->rounding() * viewportScale;
+    const auto ROUNDINGSIZE   = ROUNDING - M_SQRT1_2 * ROUNDING + 2;
+    const auto BORDERSIZE     = m_window->getRealBorderSize() * viewportScale + 1;
 
     CBox surfaceBoxExpandedBorder = surfaceBox;
     surfaceBoxExpandedBorder.expand(BORDERSIZE);
