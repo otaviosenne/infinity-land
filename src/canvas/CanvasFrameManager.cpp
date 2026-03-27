@@ -24,7 +24,27 @@ void CCanvasFrameManager::createFrame() {
         m->addDamage(CBox{0, 0, INT16_MAX, INT16_MAX});
 }
 
+void CCanvasFrameManager::parkAllFrameWindows(const CCanvasFrame& frame) {
+    static constexpr double PARK_POS = -999999.0;
+    const Vector2D          parkPos  = {PARK_POS, PARK_POS};
+
+    for (const auto& tab : frame.tabs()) {
+        for (const auto& ref : tab.windows) {
+            const auto w = ref.lock();
+            if (!w || !w->m_isMapped) continue;
+            w->m_position = parkPos;
+            w->m_realPosition->setValueAndWarp(parkPos);
+        }
+    }
+}
+
 void CCanvasFrameManager::deleteFrame(uint64_t id) {
+    for (const auto& frame : m_frames) {
+        if (frame->id() != id) continue;
+        parkAllFrameWindows(*frame);
+        break;
+    }
+
     m_frames.erase(
         std::remove_if(m_frames.begin(), m_frames.end(),
             [id](const UP<CCanvasFrame>& f) { return f->id() == id; }),
@@ -63,6 +83,17 @@ void CCanvasFrameManager::prevTab() {
     if (!frame) return;
     const int prev = (frame->activeTabIndex() - 1 + (int)frame->tabs().size()) % (int)frame->tabs().size();
     frame->setActiveTab(prev);
+}
+
+CCanvasFrame* CCanvasFrameManager::frameAtCanvasPos(const Vector2D& canvasPos) const {
+    for (const auto& f : m_frames) {
+        const auto fPos  = f->position();
+        const auto fSize = f->size();
+        if (canvasPos.x >= fPos.x && canvasPos.x <= fPos.x + fSize.x &&
+            canvasPos.y >= fPos.y && canvasPos.y <= fPos.y + fSize.y)
+            return f.get();
+    }
+    return nullptr;
 }
 
 bool CCanvasFrameManager::assignWindowIfInsideFrame(PHLWINDOW pWindow) {

@@ -10,6 +10,7 @@ class CCanvasFrameManager {
     void           deleteFrame(uint64_t id);
     void           assignFocusedWindow();
     bool           assignWindowIfInsideFrame(PHLWINDOW pWindow);
+    CCanvasFrame*  frameAtCanvasPos(const Vector2D& canvasPos) const;
     void           switchTab(int tabIndex);
     void           nextTab();
     void           prevTab();
@@ -26,6 +27,8 @@ class CCanvasFrameManager {
     std::vector<UP<CCanvasFrame>> m_frames;
     uint64_t                      m_nextId   = 1;
     uint64_t                      m_activeId = 0;
+
+    void parkAllFrameWindows(const CCanvasFrame& frame);
 
     bool     m_isDraggingFrame     = false;
     Vector2D m_frameDragStartMouse;

@@ -33,9 +33,15 @@ void CCanvasLayout::onWindowCreatedTiling(PHLWINDOW pWindow, eDirection) {
     const auto appClass = pWindow->m_initialClass;
     const auto saved    = g_pCanvasPersistence->findByClass(appClass);
 
+    const auto cursorScreen = g_pPointerManager->position();
+    const auto canvasCursor = g_pCanvasViewport->screenToCanvas(cursorScreen);
+
+    const bool cursorInFrame = g_pCanvasFrameManager &&
+        g_pCanvasFrameManager->frameAtCanvasPos(canvasCursor) != nullptr;
+
     Vector2D pos, size;
 
-    {
+    if (!cursorInFrame) {
         const auto appDefault = g_pCanvasPersistence->getAppDefault(appClass);
         const auto PMONITOR   = g_pCompositor->getMonitorFromID(pWindow->monitorID());
         const auto monSize    = PMONITOR->m_size;
@@ -44,8 +50,6 @@ void CCanvasLayout::onWindowCreatedTiling(PHLWINDOW pWindow, eDirection) {
         size.x = std::min(savedSize.x, monSize.x * 0.85);
         size.y = std::min(savedSize.y, monSize.y * 0.85);
 
-        const auto cursorScreen = g_pPointerManager->position();
-        const auto canvasCursor = g_pCanvasViewport->screenToCanvas(cursorScreen);
         pos = canvasCursor - size / 2.0;
 
         const auto viewTopLeft  = g_pCanvasViewport->screenToCanvas(Vector2D{0, 0});
@@ -63,6 +67,9 @@ void CCanvasLayout::onWindowCreatedTiling(PHLWINDOW pWindow, eDirection) {
         pos = resolveOverlap(pos, size, otherBoxes);
         pos.x = std::clamp(pos.x, viewTopLeft.x, std::max(viewTopLeft.x, viewBotRight.x - size.x));
         pos.y = std::clamp(pos.y, viewTopLeft.y, std::max(viewTopLeft.y, viewBotRight.y - size.y));
+    } else {
+        pos  = canvasCursor;
+        size = {DEFAULT_WIDTH, DEFAULT_HEIGHT};
     }
 
     pWindow->m_position      = pos;
@@ -71,6 +78,9 @@ void CCanvasLayout::onWindowCreatedTiling(PHLWINDOW pWindow, eDirection) {
     *pWindow->m_realSize     = size;
 
     m_windows.push_back(pWindow);
+
+    if (g_pCanvasFrameManager)
+        g_pCanvasFrameManager->assignWindowIfInsideFrame(pWindow);
 
     g_pCanvasPersistence->trackWindow(appClass, pos, size);
     g_pCanvasPersistence->scheduleSave();
@@ -166,11 +176,13 @@ void CCanvasLayout::fitWindowToMonitor(PHLWINDOW pWindow) {
     pWindow->m_realSize->setValueAndWarp(newSize);
     pWindow->sendWindowSize();
     pWindow->updateWindowDecos();
+    g_pHyprRenderer->damageWindow(pWindow, true);
 
     g_pCanvasPersistence->trackWindow(pWindow->m_initialClass, newPos, newSize);
     g_pCanvasPersistence->scheduleSave();
 
     g_pCanvasViewport->snapViewToBox(CBox{newPos.x, newPos.y, newSize.x, newSize.y});
+    g_pHyprRenderer->damageWindow(pWindow, true);
 }
 
 void CCanvasLayout::fitWindowTo80Percent(PHLWINDOW pWindow) {
@@ -191,6 +203,8 @@ void CCanvasLayout::fitWindowTo80Percent(PHLWINDOW pWindow) {
     pWindow->m_realSize->setValueAndWarp(newSize);
     pWindow->sendWindowSize();
     pWindow->updateWindowDecos();
+    g_pHyprRenderer->damageWindow(pWindow, true);
+    g_pCanvasViewport->damageAllMonitors();
     g_pCanvasPersistence->trackWindow(pWindow->m_initialClass, newPos, newSize);
     g_pCanvasPersistence->scheduleSave();
 }
