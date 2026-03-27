@@ -3519,7 +3519,9 @@ SDispatchResult CKeybindManager::canvasScreenshot(std::string args) {
     std::strftime(timestamp, sizeof(timestamp), "%Y-%m-%d_%H-%M-%S", &tm);
 
     const std::string outputPath = outputDir + "/infinity-" + timestamp + ".png";
-    const std::string cmd        = "grim " + outputPath;
+    const std::string cmd        = "sh -c 'grim \"" + outputPath + "\"" +
+                                   " && wl-copy < \"" + outputPath + "\"" +
+                                   " && notify-send -i camera-photo \"Infinity Land\" \"Screenshot salvo\\n" + outputPath + "\"'";
 
     Debug::log(LOG, "canvasScreenshot: saving to {}", outputPath);
 
