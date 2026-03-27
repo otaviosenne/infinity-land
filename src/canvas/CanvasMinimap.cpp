@@ -65,7 +65,6 @@ Vector2D CCanvasMinimap::canvasToMinimap(const Vector2D& canvasPos, const CBox& 
 }
 
 void CCanvasMinimap::render(PHLMONITOR pMonitor, const CRegion& damage) {
-    return;
     const auto canvasBBox  = canvasBounds();
     const auto mmBox = minimapScreenBox(pMonitor);
 

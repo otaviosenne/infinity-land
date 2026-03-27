@@ -10,6 +10,7 @@
 #include "../helpers/Monitor.hpp"
 #include "../desktop/Window.hpp"
 #include "../managers/input/InputManager.hpp"
+#include "../managers/PointerManager.hpp"
 #include "../render/Renderer.hpp"
 #include "../managers/KeybindManager.hpp"
 
@@ -42,9 +43,14 @@ void CCanvasLayout::onWindowCreatedTiling(PHLWINDOW pWindow, eDirection) {
         size.x = std::min(savedSize.x, monSize.x * 0.85);
         size.y = std::min(savedSize.y, monSize.y * 0.85);
 
-        const auto screenCenter = PMONITOR->m_position + monSize / 2.0;
-        const auto canvasCenter = g_pCanvasViewport->screenToCanvas(screenCenter);
-        pos = canvasCenter - size / 2.0;
+        const auto cursorScreen = g_pPointerManager->position();
+        const auto canvasCursor = g_pCanvasViewport->screenToCanvas(cursorScreen);
+        pos = canvasCursor - size / 2.0;
+
+        const auto viewTopLeft  = g_pCanvasViewport->screenToCanvas(Vector2D{0, 0});
+        const auto viewBotRight = g_pCanvasViewport->screenToCanvas(PMONITOR->m_size);
+        pos.x = std::clamp(pos.x, viewTopLeft.x, std::max(viewTopLeft.x, viewBotRight.x - size.x));
+        pos.y = std::clamp(pos.y, viewTopLeft.y, std::max(viewTopLeft.y, viewBotRight.y - size.y));
 
         std::vector<CBox> otherBoxes;
         for (const auto& ref : m_windows) {
@@ -54,6 +60,8 @@ void CCanvasLayout::onWindowCreatedTiling(PHLWINDOW pWindow, eDirection) {
             otherBoxes.emplace_back(CBox{w->m_position.x, w->m_position.y, w->m_size.x, w->m_size.y});
         }
         pos = resolveOverlap(pos, size, otherBoxes);
+        pos.x = std::clamp(pos.x, viewTopLeft.x, std::max(viewTopLeft.x, viewBotRight.x - size.x));
+        pos.y = std::clamp(pos.y, viewTopLeft.y, std::max(viewTopLeft.y, viewBotRight.y - size.y));
     }
 
     pWindow->m_position      = pos;
@@ -65,12 +73,14 @@ void CCanvasLayout::onWindowCreatedTiling(PHLWINDOW pWindow, eDirection) {
 
     g_pCanvasPersistence->trackWindow(appClass, pos, size);
     g_pCanvasPersistence->scheduleSave();
+    g_pCanvasViewport->damageAllMonitors();
 }
 
 void CCanvasLayout::onWindowRemovedTiling(PHLWINDOW pWindow) {
     g_pCanvasPersistence->trackWindow(pWindow->m_initialClass, pWindow->m_position, pWindow->m_size);
     g_pCanvasPersistence->scheduleSave();
     std::erase_if(m_windows, [&](const auto& ref) { return ref.lock() == pWindow; });
+    g_pCanvasViewport->damageAllMonitors();
 }
 
 bool CCanvasLayout::isWindowTiled(PHLWINDOW pWindow) {
@@ -78,11 +88,11 @@ bool CCanvasLayout::isWindowTiled(PHLWINDOW pWindow) {
 }
 
 void CCanvasLayout::recalculateMonitor(const MONITORID&) {
-    //
+    g_pCanvasViewport->damageAllMonitors();
 }
 
 void CCanvasLayout::recalculateWindow(PHLWINDOW) {
-    //
+    g_pCanvasViewport->damageAllMonitors();
 }
 
 void CCanvasLayout::resizeActiveWindow(const Vector2D& delta, eRectCorner, PHLWINDOW pWindow) {
@@ -284,6 +294,7 @@ void CCanvasLayout::onMouseMove(const Vector2D& mousePos) {
         DRAGGINGWINDOW->m_size     = newSize;
         DRAGGINGWINDOW->m_position = newPos;
         DRAGGINGWINDOW->sendWindowSize();
+        DRAGGINGWINDOW->updateWindowDecos();
     }
 
     g_pCanvasViewport->damageAllMonitors();
