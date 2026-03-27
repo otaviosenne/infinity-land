@@ -1,143 +1,128 @@
-<div align = center>
+# Infinity Land
 
-<img src="https://raw.githubusercontent.com/hyprwm/Hyprland/main/assets/header.svg" width="750" height="300" alt="banner">
+A Hyprland fork that replaces traditional workspaces with an **infinite 2D canvas** — pan, zoom, and freely arrange windows across an endless space.
 
-<br>
-
-[![Badge Workflow]][Workflow]
-[![Badge License]][License] 
-![Badge Language] 
-[![Badge Pull Requests]][Pull Requests] 
-[![Badge Issues]][Issues] 
-![Badge Hi Mom]<br>
-
-<br>
-
-Hyprland is a 100% independent, dynamic tiling Wayland compositor that doesn't sacrifice on its looks.
-
-It provides the latest Wayland features, is highly customizable, has all the eyecandy, the most powerful plugins,
-easy IPC, much more QoL stuff than other compositors and more...
-<br>
-<br>
+> Built on top of [Hyprland](https://github.com/hyprwm/Hyprland) · C++26 · Wayland-native
 
 ---
 
-**[<kbd> <br> Install <br> </kbd>][Install]** 
-**[<kbd> <br> Quick Start <br> </kbd>][Quick Start]** 
-**[<kbd> <br> Configure <br> </kbd>][Configure]** 
-**[<kbd> <br> Contribute <br> </kbd>][Contribute]**
+## What is this?
+
+Infinity Land extends Hyprland with a new `canvas` layout that transforms the workspace into an infinite, zoomable plane. Instead of flipping between numbered workspaces, you pan around a single canvas and zoom out to see everything at once.
 
 ---
 
-<br>
+## Features
 
-</div>
+### Canvas Layout
+- **Infinite 2D canvas** — windows float freely at any position
+- **Pan** — `SUPER` + drag or middle-click drag to move around
+- **Zoom** — scroll wheel to zoom in/out (10% → 100%)
+- **Viewport snap** — `fitmonitor` resizes a window to fill the visible area
 
-# Features
+### MonitorFrame
+A bordered container rendered on the canvas that behaves like a classic Hyprland workspace:
+- **Monitor-sized frame** with a white border drawn directly on the canvas
+- **Numbered workspace tabs** — switch between independent sets of windows inside the frame
+- **Auto-tiling** — 1 window fills the frame, 2 split side-by-side, 3 master+stack, 4+ grid
+- Create with `SUPER+D`, assign windows with `SUPER+SHIFT+D`
 
-- All of the eyecandy: gradient borders, blur, animations, shadows and much more
-- A lot of customization
-- 100% independent, no wlroots, no libweston, no kwin, no mutter.
-- Custom bezier curves for the best animations
-- Powerful plugin support
-- Built-in plugin manager
-- Tearing support for better gaming performance
-- Easily expandable and readable codebase
-- Fast and active development
-- Not afraid to provide bleeding-edge features
-- Config reloaded instantly upon saving
-- Fully dynamic workspaces
-- Two built-in layouts and more available as plugins
-- Global keybinds passed to your apps of choice
-- Tiling/pseudotiling/floating/fullscreen windows
-- Special workspaces (scratchpads)
-- Window groups (tabbed mode)
-- Powerful window/monitor/layer rules
-- Socket-based IPC
-- Native IME and Input Panels Support
-- and much more...
+### Minimap
+- Bottom-right corner overview of all canvas windows
+- Logarithmic zoom bar with center tick at scale = 1
+- Click to navigate directly to any canvas area
 
-<br>
-<br>
+### Dot Grid
+- Adaptive background grid that scales with zoom
+- Rendered as smooth circles via GLSL
 
-<div align = center>
+### Window Snapping
+- Automatic overlap resolution on drag end
+- Minimum-translation algorithm, up to 50 iterations
+- 16px gap enforced between windows
 
-# Gallery
+### Annotations
+- Draw strokes, arrows, sticky notes, and text on the canvas
+- Full undo/redo support
 
-<br>
+### Tags & Views
+- Color-tag windows for visual grouping
+- Multiple canvas view modes
 
-![Preview A]
+---
 
-<br>
+## Building
 
-![Preview B]
+### Dependencies
 
-<br>
+Same as upstream Hyprland:
 
-![Preview C]
+```
+cmake  ninja  pkg-config  wayland-protocols  libdrm  libinput
+aquamarine  hyprlang  hyprutils  hyprcursor  hyprgraphics
+pango  cairo  pixman  libxkbcommon  gbm
+```
 
-<br>
-<br>
+### Compile
 
-</div>
+```bash
+git clone https://github.com/otaviosenne/infinity-land
+cd infinity-land
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j$(nproc)
+```
 
-# Special Thanks
+### Run nested (for testing)
 
-<br>
+```bash
+AQUAMARINE_BACKEND=wayland ./build/Hyprland -c /path/to/your.conf
+```
 
-**[wlroots]** - *For powering Hyprland in the past*
+---
 
-**[tinywl]** - *For showing how 2 do stuff*
+## Configuration
 
-**[Sway]** - *For showing how 2 do stuff the overkill way*
+Set the layout to `canvas` in your config:
 
-**[Vivarium]** - *For showing how 2 do stuff the simple way*
+```ini
+general {
+    layout = canvas
+}
+```
 
-**[dwl]** - *For showing how 2 do stuff the hacky way*
+### Keybinds
 
-**[Wayfire]** - *For showing how 2 do some graphics stuff*
+```ini
+# Canvas
+bindm = SUPER, mouse:272, movewindow
+bindm = SUPER, mouse:273, resizewindow
+bind  = SUPER, mouse:275, layoutmsg, fitmonitor
 
+# MonitorFrame
+bind = SUPER,       D, layoutmsg, createframe
+bind = SUPER SHIFT, D, layoutmsg, assigntoframe
+bind = SUPER, bracketright, layoutmsg, nexttab
+bind = SUPER, bracketleft,  layoutmsg, prevtab
+bind = SUPER, 1, layoutmsg, frametab 1
+bind = SUPER, 2, layoutmsg, frametab 2
+bind = SUPER, 3, layoutmsg, frametab 3
+```
 
-<!----------------------------------------------------------------------------->
+---
 
-[Configure]: https://wiki.hypr.land/Configuring/
-[Stars]: https://starchart.cc/hyprwm/Hyprland
-[Hypr]: https://github.com/hyprwm/Hypr
+## layoutmsg reference
 
-[Pull Requests]: https://github.com/hyprwm/Hyprland/pulls
-[Issues]: https://github.com/hyprwm/Hyprland/issues
-[Todo]: https://github.com/hyprwm/Hyprland/projects?type=beta
+| Command | Description |
+|---|---|
+| `fitmonitor` | Resize focused window to fill the current viewport |
+| `createframe` | Spawn a MonitorFrame at the viewport center |
+| `assigntoframe` | Assign focused window to the active frame tab |
+| `nexttab` | Next tab in the active frame |
+| `prevtab` | Previous tab in the active frame |
+| `frametab <n>` | Jump to tab `n` (1-based) in the active frame |
 
-[Contribute]: https://wiki.hypr.land/Contributing-and-Debugging/
-[Install]: https://wiki.hypr.land/Getting-Started/Installation/
-[Quick Start]: https://wiki.hypr.land/Getting-Started/Master-Tutorial/
-[Workflow]: https://github.com/hyprwm/Hyprland/actions/workflows/ci.yaml
-[License]: LICENSE
+---
 
+## Credits
 
-<!----------------------------------{ Thanks }--------------------------------->
-
-[Vivarium]: https://github.com/inclement/vivarium
-[WlRoots]: https://gitlab.freedesktop.org/wlroots/wlroots
-[Wayfire]: https://github.com/WayfireWM/wayfire
-[TinyWl]: https://gitlab.freedesktop.org/wlroots/wlroots/-/blob/master/tinywl/tinywl.c
-[Sway]: https://github.com/swaywm/sway
-[DWL]: https://codeberg.org/dwl/dwl
-
-<!----------------------------------{ Images }--------------------------------->
-
-[Preview A]: https://i.ibb.co/XxFY75Mk/greerggergerhtrytghjnyhjn.png
-[Preview B]: https://i.ibb.co/C1yTb0r/falf.png
-[Preview C]: https://i.ibb.co/2Yc4q835/hyprland-preview-b.png
-
-
-<!----------------------------------{ Badges }--------------------------------->
-
-[Badge Workflow]: https://github.com/hyprwm/Hyprland/actions/workflows/ci.yaml/badge.svg
-
-[Badge Issues]: https://img.shields.io/github/issues/hyprwm/Hyprland
-[Badge Pull Requests]: https://img.shields.io/github/issues-pr/hyprwm/Hyprland
-[Badge Language]: https://img.shields.io/github/languages/top/hyprwm/Hyprland
-[Badge License]: https://img.shields.io/github/license/hyprwm/Hyprland
-[Badge Lines]: https://img.shields.io/tokei/lines/github/hyprwm/Hyprland
-[Badge Hi Mom]: https://img.shields.io/badge/Hi-mom!-ff69b4
+Infinity Land is a fork of [Hyprland](https://github.com/hyprwm/Hyprland) by [vaxerski](https://github.com/vaxerski) and contributors. All original Hyprland features are preserved.
