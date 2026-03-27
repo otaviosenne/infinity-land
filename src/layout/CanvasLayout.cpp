@@ -280,6 +280,9 @@ void CCanvasLayout::onEndDragWindow() {
             g_pCanvasViewport->damageAllMonitors();
         }
 
+        if (g_pCanvasFrameManager)
+            g_pCanvasFrameManager->assignWindowIfInsideFrame(DRAGGINGWINDOW);
+
         if (g_pCanvasUndoRedo) {
             const auto finalPos  = DRAGGINGWINDOW->m_position;
             const auto finalSize = DRAGGINGWINDOW->m_size;
@@ -299,6 +302,11 @@ void CCanvasLayout::onEndDragWindow() {
 }
 
 void CCanvasLayout::onMouseMove(const Vector2D& mousePos) {
+    if (g_pCanvasFrameManager && g_pCanvasFrameManager->isFrameDragging()) {
+        g_pCanvasFrameManager->updateFrameDrag(mousePos);
+        return;
+    }
+
     if (g_pInputManager->m_currentlyDraggedWindow.expired())
         return;
 

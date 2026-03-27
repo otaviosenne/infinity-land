@@ -9,6 +9,7 @@ class CCanvasFrameManager {
     void           createFrame();
     void           deleteFrame(uint64_t id);
     void           assignFocusedWindow();
+    void           assignWindowIfInsideFrame(PHLWINDOW pWindow);
     void           switchTab(int tabIndex);
     void           nextTab();
     void           prevTab();
@@ -16,10 +17,20 @@ class CCanvasFrameManager {
     void           renderAll(PHLMONITOR pMonitor, const CRegion& damage);
     CCanvasFrame*  activeFrame() const;
 
+    void           beginFrameDrag(const Vector2D& mouseScreenPos);
+    void           updateFrameDrag(const Vector2D& mouseScreenPos);
+    void           endFrameDrag();
+    bool           isFrameDragging() const { return m_isDraggingFrame; }
+
   private:
     std::vector<UP<CCanvasFrame>> m_frames;
     uint64_t                      m_nextId   = 1;
     uint64_t                      m_activeId = 0;
+
+    bool     m_isDraggingFrame     = false;
+    Vector2D m_frameDragStartMouse;
+    Vector2D m_frameDragStartPos;
+    uint64_t m_draggingFrameId     = 0;
 };
 
 inline UP<CCanvasFrameManager> g_pCanvasFrameManager;

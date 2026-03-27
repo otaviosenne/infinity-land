@@ -26,6 +26,7 @@ class CCanvasFrame {
 
     Vector2D    position() const { return m_position; }
     Vector2D    size() const { return m_size; }
+    void        setPosition(const Vector2D& pos) { m_position = pos; }
     int         activeTabIndex() const { return m_activeTabIndex; }
     const std::vector<SCanvasFrameTab>& tabs() const { return m_tabs; }
     uint64_t    id() const { return m_id; }

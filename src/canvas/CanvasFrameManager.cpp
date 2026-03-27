@@ -3,6 +3,7 @@
 #include "../Compositor.hpp"
 #include "../helpers/Monitor.hpp"
 #include <algorithm>
+#include <cmath>
 
 void CCanvasFrameManager::createFrame() {
     if (!g_pCanvasViewport) return;
@@ -64,6 +65,28 @@ void CCanvasFrameManager::prevTab() {
     frame->setActiveTab(prev);
 }
 
+void CCanvasFrameManager::assignWindowIfInsideFrame(PHLWINDOW pWindow) {
+    if (!pWindow || m_frames.empty()) return;
+
+    const auto wPos  = pWindow->m_position;
+    const auto wSize = pWindow->m_size;
+    const auto wCx   = wPos.x + wSize.x / 2.0;
+    const auto wCy   = wPos.y + wSize.y / 2.0;
+
+    for (auto& f : m_frames) {
+        const auto fPos  = f->position();
+        const auto fSize = f->size();
+        if (wCx >= fPos.x && wCx <= fPos.x + fSize.x &&
+            wCy >= fPos.y && wCy <= fPos.y + fSize.y) {
+            m_activeId = f->id();
+            f->assignWindow(pWindow);
+            for (auto const& m : g_pCompositor->m_monitors)
+                m->addDamage(CBox{0, 0, INT16_MAX, INT16_MAX});
+            return;
+        }
+    }
+}
+
 bool CCanvasFrameManager::isWindowInAnyFrame(PHLWINDOW pWindow) const {
     for (const auto& f : m_frames)
         if (f->hasWindow(pWindow)) return true;
@@ -80,4 +103,34 @@ CCanvasFrame* CCanvasFrameManager::activeFrame() const {
     for (const auto& f : m_frames)
         if (f->id() == m_activeId) return f.get();
     return m_frames.back().get();
+}
+
+void CCanvasFrameManager::beginFrameDrag(const Vector2D& mouseScreenPos) {
+    auto* frame = activeFrame();
+    if (!frame || !g_pCanvasViewport) return;
+
+    m_isDraggingFrame     = true;
+    m_draggingFrameId     = frame->id();
+    m_frameDragStartMouse = g_pCanvasViewport->screenToCanvas(mouseScreenPos);
+    m_frameDragStartPos   = frame->position();
+}
+
+void CCanvasFrameManager::updateFrameDrag(const Vector2D& mouseScreenPos) {
+    if (!m_isDraggingFrame || !g_pCanvasViewport) return;
+
+    for (auto& f : m_frames) {
+        if (f->id() != m_draggingFrameId) continue;
+        const auto canvasMouse = g_pCanvasViewport->screenToCanvas(mouseScreenPos);
+        const auto delta       = canvasMouse - m_frameDragStartMouse;
+        f->setPosition(m_frameDragStartPos + delta);
+
+        for (auto const& m : g_pCompositor->m_monitors)
+            m->addDamage(CBox{0, 0, INT16_MAX, INT16_MAX});
+        return;
+    }
+}
+
+void CCanvasFrameManager::endFrameDrag() {
+    m_isDraggingFrame = false;
+    m_draggingFrameId = 0;
 }

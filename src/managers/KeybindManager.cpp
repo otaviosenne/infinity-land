@@ -2809,6 +2809,16 @@ SDispatchResult CKeybindManager::mouse(std::string args) {
     const auto ARGS    = CVarList(args.substr(1), 2, ' ');
     const auto PRESSED = args[0] == '1';
 
+    if (ARGS[0] == "canvas:moveframe") {
+        if (!g_pCanvasFrameManager)
+            return SDispatchResult{.passEvent = true};
+        if (PRESSED)
+            g_pCanvasFrameManager->beginFrameDrag(g_pInputManager->getMouseCoordsInternal());
+        else
+            g_pCanvasFrameManager->endFrameDrag();
+        return {};
+    }
+
     if (!PRESSED) {
         return changeMouseBindMode(MBIND_INVALID);
     }
