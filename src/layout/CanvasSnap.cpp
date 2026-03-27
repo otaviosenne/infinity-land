@@ -2,8 +2,9 @@
 #include <cmath>
 #include <limits>
 
-static constexpr int    OVERLAP_MAX_ITERATIONS = 10;
+static constexpr int    OVERLAP_MAX_ITERATIONS = 50;
 static constexpr double GRID_GAP               = 20.0;
+static constexpr double RESOLVE_GAP            = 16.0;
 
 static bool overlaps(const CBox& a, const CBox& b) {
     return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
@@ -35,13 +36,13 @@ Vector2D resolveOverlap(const Vector2D& droppedPos, const Vector2D& droppedSize,
             const double minPush = std::min({absLeft, absRight, absUp, absDown});
 
             if (minPush == absLeft)
-                pos.x += pushLeft;
+                pos.x += pushLeft - RESOLVE_GAP;
             else if (minPush == absRight)
-                pos.x += pushRight;
+                pos.x += pushRight + RESOLVE_GAP;
             else if (minPush == absUp)
-                pos.y += pushUp;
+                pos.y += pushUp - RESOLVE_GAP;
             else
-                pos.y += pushDown;
+                pos.y += pushDown + RESOLVE_GAP;
 
             dropped = {pos.x, pos.y, droppedSize.x, droppedSize.y};
         }
