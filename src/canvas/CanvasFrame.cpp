@@ -46,8 +46,12 @@ void CCanvasFrame::applyTileToWindow(PHLWINDOW pWindow, const CBox& tileBox) {
 
     pWindow->m_position = newPos;
     pWindow->m_size     = newSize;
-    pWindow->m_realPosition->setValueAndWarp(newPos);
-    pWindow->m_realSize->setValueAndWarp(newSize);
+
+    g_pHyprRenderer->damageWindow(pWindow);
+    *pWindow->m_realSize     = newSize;
+    *pWindow->m_realPosition = newPos;
+    g_pHyprRenderer->damageWindow(pWindow);
+
     pWindow->sendWindowSize();
     pWindow->updateWindowDecos();
 }
