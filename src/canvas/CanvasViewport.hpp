@@ -15,6 +15,7 @@ class CCanvasViewport {
 
     void     setViewCenter(const Vector2D& canvasPos);
     void     zoomToFit(const CBox& canvasBox);
+    void     snapViewToBox(const CBox& canvasBox);
     void     damageAllMonitors();
 
   private:

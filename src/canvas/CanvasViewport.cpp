@@ -63,6 +63,12 @@ void CCanvasViewport::zoomToFit(const CBox& canvasBox) {
     damageAllMonitors();
 }
 
+void CCanvasViewport::snapViewToBox(const CBox& canvasBox) {
+    m_scale  = 1.0;
+    m_offset = Vector2D{-canvasBox.x, -canvasBox.y};
+    damageAllMonitors();
+}
+
 void CCanvasViewport::damageAllMonitors() {
     for (auto const& m : g_pCompositor->m_monitors) {
         m->addDamage(CBox{0, 0, INT16_MAX, INT16_MAX});

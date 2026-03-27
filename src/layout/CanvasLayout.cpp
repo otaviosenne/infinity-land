@@ -128,9 +128,8 @@ void CCanvasLayout::fitWindowToMonitor(PHLWINDOW pWindow) {
     if (!PMONITOR)
         return;
 
-    const auto scale   = g_pCanvasViewport->scale();
-    const auto newSize = PMONITOR->m_size / scale;
-    const auto origin  = g_pCanvasViewport->screenToCanvas(Vector2D{0, 0});
+    const auto newSize   = PMONITOR->m_size;
+    const auto candidate = g_pCanvasViewport->screenToCanvas(Vector2D{0, 0});
 
     std::vector<CBox> otherBoxes;
     for (const auto& ref : m_windows) {
@@ -140,7 +139,7 @@ void CCanvasLayout::fitWindowToMonitor(PHLWINDOW pWindow) {
         otherBoxes.emplace_back(CBox{w->m_position.x, w->m_position.y, w->m_size.x, w->m_size.y});
     }
 
-    auto newPos = resolveOverlap(origin, newSize, otherBoxes);
+    const auto newPos = resolveOverlap(candidate, newSize, otherBoxes);
 
     pWindow->m_position = newPos;
     pWindow->m_size     = newSize;
@@ -151,7 +150,8 @@ void CCanvasLayout::fitWindowToMonitor(PHLWINDOW pWindow) {
 
     g_pCanvasPersistence->trackWindow(pWindow->m_initialClass, newPos, newSize);
     g_pCanvasPersistence->scheduleSave();
-    g_pCanvasViewport->damageAllMonitors();
+
+    g_pCanvasViewport->snapViewToBox(CBox{newPos.x, newPos.y, newSize.x, newSize.y});
 }
 
 SWindowRenderLayoutHints CCanvasLayout::requestRenderHints(PHLWINDOW) {
