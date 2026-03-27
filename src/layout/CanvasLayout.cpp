@@ -129,6 +129,10 @@ std::any CCanvasLayout::layoutMessage(SLayoutMessageHeader header, std::string m
     else if (msg.rfind("frametab ", 0) == 0 && g_pCanvasFrameManager) {
         const int idx = std::stoi(msg.substr(9)) - 1;
         g_pCanvasFrameManager->switchTab(idx);
+    } else if (msg == "deleteframe" && g_pCanvasFrameManager) {
+        const auto* frame = g_pCanvasFrameManager->activeFrame();
+        if (frame)
+            g_pCanvasFrameManager->deleteFrame(frame->id());
     }
     return {};
 }
