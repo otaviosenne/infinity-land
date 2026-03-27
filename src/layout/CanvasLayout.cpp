@@ -118,6 +118,8 @@ void CCanvasLayout::fullscreenRequestForWindow(PHLWINDOW, eFullscreenMode, eFull
 std::any CCanvasLayout::layoutMessage(SLayoutMessageHeader header, std::string msg) {
     if (msg == "fitmonitor" && header.pWindow)
         fitWindowToMonitor(header.pWindow);
+    else if (msg == "fitwindow80" && header.pWindow)
+        fitWindowTo80Percent(header.pWindow);
     else if (msg == "createframe" && g_pCanvasFrameManager)
         g_pCanvasFrameManager->createFrame();
     else if (msg == "assigntoframe" && g_pCanvasFrameManager)
@@ -169,6 +171,28 @@ void CCanvasLayout::fitWindowToMonitor(PHLWINDOW pWindow) {
     g_pCanvasPersistence->scheduleSave();
 
     g_pCanvasViewport->snapViewToBox(CBox{newPos.x, newPos.y, newSize.x, newSize.y});
+}
+
+void CCanvasLayout::fitWindowTo80Percent(PHLWINDOW pWindow) {
+    if (!validMapped(pWindow))
+        return;
+
+    const auto PMONITOR = g_pCompositor->getMonitorFromID(pWindow->monitorID());
+    if (!PMONITOR)
+        return;
+
+    const auto newSize = PMONITOR->m_size * 0.8;
+    const auto center  = g_pCanvasViewport->screenToCanvas(PMONITOR->m_position + PMONITOR->m_size / 2.0);
+    const auto newPos  = center - newSize / 2.0;
+
+    pWindow->m_position = newPos;
+    pWindow->m_size     = newSize;
+    pWindow->m_realPosition->setValueAndWarp(newPos);
+    pWindow->m_realSize->setValueAndWarp(newSize);
+    pWindow->sendWindowSize();
+    pWindow->updateWindowDecos();
+    g_pCanvasPersistence->trackWindow(pWindow->m_initialClass, newPos, newSize);
+    g_pCanvasPersistence->scheduleSave();
 }
 
 SWindowRenderLayoutHints CCanvasLayout::requestRenderHints(PHLWINDOW) {
@@ -278,10 +302,11 @@ void CCanvasLayout::onEndDragWindow() {
             const auto resolved = resolveOverlap(DRAGGINGWINDOW->m_position, DRAGGINGWINDOW->m_size, otherBoxes);
             if (resolved.x != DRAGGINGWINDOW->m_position.x || resolved.y != DRAGGINGWINDOW->m_position.y) {
                 DRAGGINGWINDOW->m_position = resolved;
-                DRAGGINGWINDOW->m_realPosition->setValueAndWarp(resolved);
+                g_pHyprRenderer->damageWindow(DRAGGINGWINDOW);
+                *DRAGGINGWINDOW->m_realPosition = resolved;
+                g_pHyprRenderer->damageWindow(DRAGGINGWINDOW);
                 g_pCanvasPersistence->trackWindow(DRAGGINGWINDOW->m_initialClass, resolved, DRAGGINGWINDOW->m_size);
                 g_pCanvasPersistence->scheduleSave();
-                g_pCanvasViewport->damageAllMonitors();
             }
         }
 
