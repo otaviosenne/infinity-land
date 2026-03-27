@@ -1,6 +1,7 @@
 #include "CanvasFrameManager.hpp"
 #include "CanvasViewport.hpp"
 #include "../Compositor.hpp"
+#include "../helpers/Monitor.hpp"
 #include <algorithm>
 
 void CCanvasFrameManager::createFrame() {
@@ -17,6 +18,9 @@ void CCanvasFrameManager::createFrame() {
     const uint64_t id = m_nextId++;
     m_frames.push_back(makeUnique<CCanvasFrame>(id, framePos, frameSize));
     m_activeId = id;
+
+    for (auto const& m : g_pCompositor->m_monitors)
+        m->addDamage(CBox{0, 0, INT16_MAX, INT16_MAX});
 }
 
 void CCanvasFrameManager::deleteFrame(uint64_t id) {
@@ -27,6 +31,9 @@ void CCanvasFrameManager::deleteFrame(uint64_t id) {
 
     if (m_activeId == id)
         m_activeId = m_frames.empty() ? 0 : m_frames.back()->id();
+
+    for (auto const& m : g_pCompositor->m_monitors)
+        m->addDamage(CBox{0, 0, INT16_MAX, INT16_MAX});
 }
 
 void CCanvasFrameManager::assignFocusedWindow() {
