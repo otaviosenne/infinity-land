@@ -15,6 +15,8 @@
 #include "../canvas/CanvasQuickJump.hpp"
 #include "../canvas/CanvasAnnotation.hpp"
 #include "../canvas/CanvasDrawMode.hpp"
+#include "../canvas/CanvasMinimap.hpp"
+#include "../canvas/CanvasFrameManager.hpp"
 #include "../layout/CanvasSnap.hpp"
 #include "../layout/CanvasLayout.hpp"
 #include "../canvas/CanvasPersistence.hpp"
@@ -164,6 +166,14 @@ CKeybindManager::CKeybindManager() {
     m_dispatchers["canvas:redo"]                   = canvasRedo;
     m_dispatchers["canvas:tag"]                    = canvasTag;
     m_dispatchers["canvas:view"]                   = canvasView;
+    m_dispatchers["canvas:toggleminimap"]          = canvasToggleMinimap;
+    m_dispatchers["canvas:createframe"]            = canvasCreateFrame;
+    m_dispatchers["canvas:deleteframe"]            = canvasDeleteFrame;
+    m_dispatchers["canvas:assigntoframe"]          = canvasAssignToFrame;
+    m_dispatchers["canvas:nexttab"]                = canvasNextTab;
+    m_dispatchers["canvas:prevtab"]                = canvasPrevTab;
+    m_dispatchers["canvas:frametab"]               = canvasFrameTab;
+    m_dispatchers["canvas:screenshot"]             = canvasScreenshot;
 
     m_scrollTimer.reset();
 
@@ -3442,6 +3452,18 @@ SDispatchResult CKeybindManager::canvasDrawMode(std::string args) {
     return {};
 }
 
+SDispatchResult CKeybindManager::canvasToggleMinimap(std::string args) {
+    if (!g_pCanvasMinimap)
+        return {.success = false, .error = "Canvas minimap not initialized"};
+
+    g_pCanvasMinimap->toggle();
+
+    if (g_pCanvasViewport)
+        g_pCanvasViewport->damageAllMonitors();
+
+    return {};
+}
+
 SDispatchResult CKeybindManager::canvasClearAnnotations(std::string args) {
     if (!g_pCanvasAnnotation)
         return {.success = false, .error = "Canvas annotations not initialized"};
@@ -3479,5 +3501,73 @@ SDispatchResult CKeybindManager::canvasRedo(std::string) {
         return {.success = false, .error = "Undo/redo not initialized"};
 
     g_pCanvasUndoRedo->redo();
+    return {};
+}
+
+SDispatchResult CKeybindManager::canvasScreenshot(std::string args) {
+    const auto homeDir    = std::string(getenv("HOME") ? getenv("HOME") : "/tmp");
+    const auto outputDir  = homeDir + "/Pictures/Screenshots";
+
+    std::filesystem::create_directories(outputDir);
+
+    const auto now  = std::chrono::system_clock::now();
+    const auto time = std::chrono::system_clock::to_time_t(now);
+    std::tm    tm{};
+    localtime_r(&time, &tm);
+
+    char timestamp[32];
+    std::strftime(timestamp, sizeof(timestamp), "%Y-%m-%d_%H-%M-%S", &tm);
+
+    const std::string outputPath = outputDir + "/infinity-" + timestamp + ".png";
+    const std::string cmd        = "grim " + outputPath;
+
+    Debug::log(LOG, "canvasScreenshot: saving to {}", outputPath);
+
+    spawnRawProc(cmd, nullptr);
+    return {};
+}
+
+SDispatchResult CKeybindManager::canvasCreateFrame(std::string args) {
+    if (!g_pCanvasFrameManager)
+        return {.success = false, .error = "Canvas frame manager not initialized"};
+    g_pCanvasFrameManager->createFrame();
+    return {};
+}
+
+SDispatchResult CKeybindManager::canvasDeleteFrame(std::string args) {
+    if (!g_pCanvasFrameManager)
+        return {.success = false, .error = "Canvas frame manager not initialized"};
+    const auto* frame = g_pCanvasFrameManager->activeFrame();
+    if (frame)
+        g_pCanvasFrameManager->deleteFrame(frame->id());
+    return {};
+}
+
+SDispatchResult CKeybindManager::canvasAssignToFrame(std::string args) {
+    if (!g_pCanvasFrameManager)
+        return {.success = false, .error = "Canvas frame manager not initialized"};
+    g_pCanvasFrameManager->assignFocusedWindow();
+    return {};
+}
+
+SDispatchResult CKeybindManager::canvasNextTab(std::string args) {
+    if (!g_pCanvasFrameManager)
+        return {.success = false, .error = "Canvas frame manager not initialized"};
+    g_pCanvasFrameManager->nextTab();
+    return {};
+}
+
+SDispatchResult CKeybindManager::canvasPrevTab(std::string args) {
+    if (!g_pCanvasFrameManager)
+        return {.success = false, .error = "Canvas frame manager not initialized"};
+    g_pCanvasFrameManager->prevTab();
+    return {};
+}
+
+SDispatchResult CKeybindManager::canvasFrameTab(std::string args) {
+    if (!g_pCanvasFrameManager)
+        return {.success = false, .error = "Canvas frame manager not initialized"};
+    const int idx = std::stoi(args) - 1;
+    g_pCanvasFrameManager->switchTab(idx);
     return {};
 }

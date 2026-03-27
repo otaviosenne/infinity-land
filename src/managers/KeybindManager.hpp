@@ -239,6 +239,14 @@ class CKeybindManager {
     static SDispatchResult canvasClearAnnotations(std::string);
     static SDispatchResult canvasUndo(std::string);
     static SDispatchResult canvasRedo(std::string);
+    static SDispatchResult canvasToggleMinimap(std::string);
+    static SDispatchResult canvasScreenshot(std::string);
+    static SDispatchResult canvasCreateFrame(std::string);
+    static SDispatchResult canvasDeleteFrame(std::string);
+    static SDispatchResult canvasAssignToFrame(std::string);
+    static SDispatchResult canvasNextTab(std::string);
+    static SDispatchResult canvasPrevTab(std::string);
+    static SDispatchResult canvasFrameTab(std::string);
 
     friend class CCompositor;
     friend class CInputManager;
