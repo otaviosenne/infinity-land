@@ -506,7 +506,7 @@ void CInputManager::mouseMoveUnified(uint32_t time, bool refocus, bool mouse, st
 
         g_pSeatManager->setPointerFocus(nullptr, {});
 
-        if (refocus || g_pCompositor->m_lastWindow.expired()) // if we are forcing a refocus, and we don't find a surface, clear the kb focus too!
+        if (refocus || g_pCompositor->m_lastWindow.expired() || FOLLOWMOUSE != 0)
             g_pCompositor->focusWindow(nullptr);
 
         return;
