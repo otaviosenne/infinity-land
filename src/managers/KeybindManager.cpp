@@ -3520,9 +3520,19 @@ SDispatchResult CKeybindManager::canvasScreenshot(std::string args) {
 
     std::filesystem::create_directories(outputDir);
 
-    const std::string cmd = "flameshot gui --path \"" + outputDir + "\"";
+    const auto now  = std::chrono::system_clock::now();
+    const auto time = std::chrono::system_clock::to_time_t(now);
+    std::tm    tm{};
+    localtime_r(&time, &tm);
 
-    Debug::log(LOG, "canvasScreenshot: launching flameshot in {}", outputDir);
+    char timestamp[32];
+    std::strftime(timestamp, sizeof(timestamp), "%Y-%m-%d_%H-%M-%S", &tm);
+
+    const std::string outputPath = outputDir + "/infinity-" + std::string(timestamp) + ".png";
+    const std::string cmd        = "sh -c 'grim -g \"$(slurp)\" \"" + outputPath + "\"" +
+                                   " && wl-copy < \"" + outputPath + "\"'";
+
+    Debug::log(LOG, "canvasScreenshot: saving to {}", outputPath);
 
     spawnRawProc(cmd, nullptr);
     return {};
