@@ -3,6 +3,7 @@
 #include "../../canvas/CanvasViewport.hpp"
 #include "../../canvas/CanvasTheme.hpp"
 #include "../../managers/PointerManager.hpp"
+#include "../../helpers/Monitor.hpp"
 
 static constexpr float BASE_GRID_SPACING  = 40.0f;
 static constexpr float LOW_ZOOM_THRESHOLD = 0.4f;
@@ -26,8 +27,9 @@ void CDotGridPassElement::draw(const CRegion& damage) {
     const double canvasScale    = g_pCanvasViewport->scale();
     const auto   offset         = g_pCanvasViewport->offset();
     const auto   monSize        = pMonitor->m_transformedSize;
+    const float  monScale       = pMonitor->m_scale;
     const float  gridSpacing    = gridSpacingForScale(canvasScale);
-    const float  scaledSpacing  = gridSpacing * canvasScale;
+    const float  scaledSpacing  = gridSpacing * canvasScale * monScale;
 
     if (scaledSpacing < MIN_VISIBLE_SPACING)
         return;
@@ -38,10 +40,12 @@ void CDotGridPassElement::draw(const CRegion& damage) {
         CHyprColor(0.55f, 0.55f, 0.58f, 1.0f),
     };
 
-    const auto cursorPos = g_pPointerManager->position() - pMonitor->m_position;
+    const auto cursorPos = (g_pPointerManager->position() - pMonitor->m_position) * monScale;
 
-    const float modX = fmod(fmod(offset.x, (double)scaledSpacing) + scaledSpacing, (double)scaledSpacing);
-    const float modY = fmod(fmod(offset.y, (double)scaledSpacing) + scaledSpacing, (double)scaledSpacing);
+    const float offsetXPx = offset.x * monScale;
+    const float offsetYPx = offset.y * monScale;
+    const float modX = fmod(fmod(offsetXPx, (double)scaledSpacing) + scaledSpacing, (double)scaledSpacing);
+    const float modY = fmod(fmod(offsetYPx, (double)scaledSpacing) + scaledSpacing, (double)scaledSpacing);
 
     const int dotsX = std::min(MAX_DOTS_PER_AXIS, static_cast<int>(monSize.x / scaledSpacing) + 2);
     const int dotsY = std::min(MAX_DOTS_PER_AXIS, static_cast<int>(monSize.y / scaledSpacing) + 2);
@@ -60,12 +64,13 @@ void CDotGridPassElement::draw(const CRegion& damage) {
             const float dy     = y - cursorPos.y;
             const float distSq = dx * dx + dy * dy;
 
-            float      dotSz    = DOT_SIZE;
+            float      dotSz    = DOT_SIZE * monScale;
             CHyprColor dotColor = themeColors.dotColor;
 
-            if (distSq < GLOW_RADIUS * GLOW_RADIUS) {
-                const float glowFactor = 1.0f - sqrtf(distSq) / GLOW_RADIUS;
-                dotSz += (GLOW_DOT_SIZE - DOT_SIZE) * glowFactor;
+            const float glowRadiusPx = GLOW_RADIUS * monScale;
+            if (distSq < glowRadiusPx * glowRadiusPx) {
+                const float glowFactor = 1.0f - sqrtf(distSq) / glowRadiusPx;
+                dotSz += (GLOW_DOT_SIZE - DOT_SIZE) * monScale * glowFactor;
                 dotColor.r += (themeColors.glowDotColor.r - dotColor.r) * glowFactor;
                 dotColor.g += (themeColors.glowDotColor.g - dotColor.g) * glowFactor;
                 dotColor.b += (themeColors.glowDotColor.b - dotColor.b) * glowFactor;
@@ -75,6 +80,8 @@ void CDotGridPassElement::draw(const CRegion& damage) {
             g_pHyprOpenGL->renderRect(CBox{x - half, y - half, dotSz, dotSz}, dotColor, {});
         }
     }
+
+    damageGlowArea(pMonitor, cursorPos);
 }
 
 bool CDotGridPassElement::needsLiveBlur() { return false; }
@@ -82,3 +89,8 @@ bool CDotGridPassElement::needsPrecomputeBlur() { return false; }
 const char* CDotGridPassElement::passName() { return "DotGrid"; }
 bool CDotGridPassElement::disableSimplification() { return true; }
 std::optional<CBox> CDotGridPassElement::boundingBox() { return std::nullopt; }
+
+void CDotGridPassElement::damageGlowArea(PHLMONITOR pMonitor, const Vector2D& cursorPos) const {
+    const float glowRadiusPx = GLOW_RADIUS * pMonitor->m_scale;
+    pMonitor->addDamage(CBox{cursorPos.x - glowRadiusPx, cursorPos.y - glowRadiusPx, glowRadiusPx * 2.0f, glowRadiusPx * 2.0f});
+}

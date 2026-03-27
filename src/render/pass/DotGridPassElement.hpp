@@ -22,4 +22,6 @@ class CDotGridPassElement : public IPassElement {
 
   private:
     SDotGridData m_data;
+
+    void damageGlowArea(PHLMONITOR pMonitor, const Vector2D& cursorPos) const;
 };
