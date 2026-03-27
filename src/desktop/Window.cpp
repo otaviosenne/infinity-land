@@ -13,6 +13,7 @@
 #include "../render/decorations/CHyprBorderDecoration.hpp"
 #include "../config/ConfigValue.hpp"
 #include "../config/ConfigManager.hpp"
+#include "../canvas/CanvasViewport.hpp"
 #include "../managers/TokenManager.hpp"
 #include "../managers/animation/AnimationManager.hpp"
 #include "../managers/ANRManager.hpp"
@@ -1278,6 +1279,9 @@ bool CWindow::visibleOnMonitor(PHLMONITOR pMonitor) {
 
     if (m_isFloating)
         wbox = getFullWindowBoundingBox();
+
+    if (g_pCanvasViewport && !m_pinned)
+        wbox = g_pCanvasViewport->canvasToScreen(wbox);
 
     return !wbox.intersection({pMonitor->m_position, pMonitor->m_size}).empty();
 }
