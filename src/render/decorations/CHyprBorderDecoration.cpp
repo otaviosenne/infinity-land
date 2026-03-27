@@ -5,6 +5,7 @@
 #include "../pass/BorderPassElement.hpp"
 #include "../Renderer.hpp"
 #include "../../managers/HookSystemManager.hpp"
+#include "../../canvas/CanvasViewport.hpp"
 
 CHyprBorderDecoration::CHyprBorderDecoration(PHLWINDOW pWindow) : IHyprWindowDecoration(pWindow), m_window(pWindow) {
     ;
@@ -52,7 +53,15 @@ void CHyprBorderDecoration::draw(PHLMONITOR pMonitor, float const& a) {
     if (m_assignedGeometry.width < m_extents.topLeft.x + 1 || m_assignedGeometry.height < m_extents.topLeft.y + 1)
         return;
 
-    CBox windowBox = assignedBoxGlobal().translate(-pMonitor->m_position + m_window->m_floatingOffset).expand(-m_window->getRealBorderSize()).scale(pMonitor->m_scale).round();
+    const float viewportScale         = (g_pCanvasViewport && !m_window->m_pinned) ? (float)g_pCanvasViewport->scale() : 1.0f;
+    const float minBorderLogical      = 1.0f / pMonitor->m_scale;
+    const float borderSizeLogical     = std::max(minBorderLogical, m_window->getRealBorderSize() * viewportScale);
+
+    CBox assignedBox = assignedBoxGlobal();
+    if (g_pCanvasViewport && !m_window->m_pinned)
+        assignedBox = g_pCanvasViewport->canvasToScreen(assignedBox);
+
+    CBox windowBox = assignedBox.translate(-pMonitor->m_position + m_window->m_floatingOffset).expand(-borderSizeLogical).scale(pMonitor->m_scale).round();
 
     if (windowBox.width < 1 || windowBox.height < 1)
         return;
@@ -70,12 +79,12 @@ void CHyprBorderDecoration::draw(PHLMONITOR pMonitor, float const& a) {
             m_window->m_realBorderColorPrevious.m_angle = grad.m_angle;
     }
 
-    int                             borderSize       = m_window->getRealBorderSize();
-    const auto                      ROUNDINGBASE     = m_window->rounding();
-    const auto                      ROUNDING         = ROUNDINGBASE * pMonitor->m_scale;
-    const auto                      ROUNDINGPOWER    = m_window->roundingPower();
-    const auto                      CORRECTIONOFFSET = (borderSize * (M_SQRT2 - 1) * std::max(2.0 - ROUNDINGPOWER, 0.0));
-    const auto                      OUTERROUND       = ((ROUNDINGBASE + borderSize) - CORRECTIONOFFSET) * pMonitor->m_scale;
+    const int  borderSize       = (int)(borderSizeLogical * pMonitor->m_scale);
+    const auto ROUNDINGBASE     = m_window->rounding() * viewportScale;
+    const auto ROUNDING         = ROUNDINGBASE * pMonitor->m_scale;
+    const auto ROUNDINGPOWER    = m_window->roundingPower();
+    const auto CORRECTIONOFFSET = (borderSizeLogical * (M_SQRT2 - 1) * std::max(2.0 - ROUNDINGPOWER, 0.0));
+    const auto OUTERROUND       = ((ROUNDINGBASE + borderSizeLogical) - CORRECTIONOFFSET) * pMonitor->m_scale;
 
     CBorderPassElement::SBorderData data;
     data.box           = windowBox;
