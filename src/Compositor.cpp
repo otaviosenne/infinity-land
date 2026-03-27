@@ -1069,16 +1069,18 @@ SP<CWLSurfaceResource> CCompositor::vectorWindowToSurface(const Vector2D& pos, P
 
     RASSERT(!pWindow->m_isX11, "Cannot call vectorWindowToSurface on an X11 window!");
 
+    const auto canvasPos = g_pCanvasViewport ? g_pCanvasViewport->screenToCanvas(pos) : pos;
+
     // try popups first
-    const auto PPOPUP = pWindow->m_popupHead->at(pos);
+    const auto PPOPUP = pWindow->m_popupHead->at(canvasPos);
 
     if (PPOPUP) {
         const auto OFF = PPOPUP->coordsRelativeToParent();
-        sl             = pos - pWindow->m_realPosition->goal() - OFF;
+        sl             = canvasPos - pWindow->m_realPosition->goal() - OFF;
         return PPOPUP->m_wlSurface->resource();
     }
 
-    auto [surf, local] = pWindow->m_wlSurface->resource()->at(pos - pWindow->m_realPosition->goal(), true);
+    auto [surf, local] = pWindow->m_wlSurface->resource()->at(canvasPos - pWindow->m_realPosition->goal(), true);
     if (surf) {
         sl = local;
         return surf;
