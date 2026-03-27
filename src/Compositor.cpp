@@ -55,6 +55,7 @@
 #include "canvas/CanvasAnnotation.hpp"
 #include "canvas/CanvasDrawMode.hpp"
 #include "canvas/CanvasToolbar.hpp"
+#include "canvas/CanvasFrameManager.hpp"
 #include "managers/SessionLockManager.hpp"
 #include "managers/XWaylandManager.hpp"
 
@@ -673,6 +674,9 @@ void CCompositor::initManagers(eManagersInitStage stage) {
 
             Debug::log(LOG, "Creating the CanvasToolbar!");
             g_pCanvasToolbar = makeUnique<CCanvasToolbar>();
+
+            Debug::log(LOG, "Creating the CanvasFrameManager!");
+            g_pCanvasFrameManager = makeUnique<CCanvasFrameManager>();
 
             Debug::log(LOG, "Creating the LayoutManager!");
             g_pLayoutManager = makeUnique<CLayoutManager>();

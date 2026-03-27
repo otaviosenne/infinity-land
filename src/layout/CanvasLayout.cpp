@@ -1,6 +1,7 @@
 #include "CanvasLayout.hpp"
 #include "CanvasSnap.hpp"
 #include "../canvas/CanvasCommand.hpp"
+#include "../canvas/CanvasFrameManager.hpp"
 #include "../canvas/CanvasPersistence.hpp"
 #include "../canvas/CanvasTags.hpp"
 #include "../canvas/CanvasUndoRedo.hpp"
@@ -117,6 +118,18 @@ void CCanvasLayout::fullscreenRequestForWindow(PHLWINDOW, eFullscreenMode, eFull
 std::any CCanvasLayout::layoutMessage(SLayoutMessageHeader header, std::string msg) {
     if (msg == "fitmonitor" && header.pWindow)
         fitWindowToMonitor(header.pWindow);
+    else if (msg == "createframe" && g_pCanvasFrameManager)
+        g_pCanvasFrameManager->createFrame();
+    else if (msg == "assigntoframe" && g_pCanvasFrameManager)
+        g_pCanvasFrameManager->assignFocusedWindow();
+    else if (msg == "nexttab" && g_pCanvasFrameManager)
+        g_pCanvasFrameManager->nextTab();
+    else if (msg == "prevtab" && g_pCanvasFrameManager)
+        g_pCanvasFrameManager->prevTab();
+    else if (msg.rfind("frametab ", 0) == 0 && g_pCanvasFrameManager) {
+        const int idx = std::stoi(msg.substr(9)) - 1;
+        g_pCanvasFrameManager->switchTab(idx);
+    }
     return {};
 }
 

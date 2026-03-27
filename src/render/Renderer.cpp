@@ -42,6 +42,7 @@
 #include "../canvas/CanvasQuickJump.hpp"
 #include "../canvas/CanvasToolbar.hpp"
 #include "../canvas/CanvasTags.hpp"
+#include "../canvas/CanvasFrameManager.hpp"
 #include "debug/Log.hpp"
 #include "../protocols/ColorManagement.hpp"
 #include "../protocols/types/ContentType.hpp"
@@ -967,6 +968,9 @@ void CHyprRenderer::renderAllClientsForWorkspace(PHLMONITOR pMonitor, PHLWORKSPA
             renderLayer(ls.lock(), pMonitor, time);
         }
 
+        if (g_pCanvasFrameManager)
+            g_pCanvasFrameManager->renderAll(pMonitor, g_pHyprOpenGL->m_renderData.damage);
+
         if (g_pCanvasMinimap)
             g_pCanvasMinimap->render(pMonitor, g_pHyprOpenGL->m_renderData.damage);
 
@@ -1085,6 +1089,9 @@ void CHyprRenderer::renderAllClientsForWorkspace(PHLMONITOR pMonitor, PHLWORKSPA
             renderLayer(ls.lock(), pMonitor, time, true);
         }
     }
+
+    if (g_pCanvasFrameManager)
+        g_pCanvasFrameManager->renderAll(pMonitor, g_pHyprOpenGL->m_renderData.damage);
 
     if (g_pCanvasMinimap)
         g_pCanvasMinimap->render(pMonitor, g_pHyprOpenGL->m_renderData.damage);
@@ -2171,6 +2178,7 @@ void CHyprRenderer::ensureCursorRenderingMode() {
         }
 
         setCursorHidden(false);
+        g_pInputManager->simulateMouseMovement();
     }
 }
 
