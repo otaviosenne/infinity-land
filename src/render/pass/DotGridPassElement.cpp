@@ -5,13 +5,14 @@
 #include "../../managers/PointerManager.hpp"
 #include "../../helpers/Monitor.hpp"
 
-static constexpr float BASE_GRID_SPACING  = 40.0f;
-static constexpr float LOW_ZOOM_THRESHOLD = 0.4f;
-static constexpr float DOT_SIZE           = 2.0f;
-static constexpr float GLOW_RADIUS        = 120.0f;
-static constexpr float GLOW_DOT_SIZE      = 3.0f;
+static constexpr float BASE_GRID_SPACING   = 40.0f;
+static constexpr float LOW_ZOOM_THRESHOLD  = 0.4f;
+static constexpr float DOT_SPACING_RATIO   = 0.05f;
+static constexpr float DOT_GLOW_RATIO      = 0.075f;
+static constexpr float DOT_MIN_PX          = 1.5f;
+static constexpr float GLOW_RADIUS         = 120.0f;
 static constexpr float MIN_VISIBLE_SPACING = 8.0f;
-static constexpr int   MAX_DOTS_PER_AXIS  = 120;
+static constexpr int   MAX_DOTS_PER_AXIS   = 120;
 
 static float gridSpacingForScale(double scale) {
     return scale <= LOW_ZOOM_THRESHOLD ? BASE_GRID_SPACING * 2.0f : BASE_GRID_SPACING;
@@ -64,20 +65,20 @@ void CDotGridPassElement::draw(const CRegion& damage) {
             const float dy     = y - cursorPos.y;
             const float distSq = dx * dx + dy * dy;
 
-            float      dotSz    = DOT_SIZE * monScale;
+            float      dotSz    = std::max(DOT_MIN_PX, scaledSpacing * DOT_SPACING_RATIO);
             CHyprColor dotColor = themeColors.dotColor;
 
             const float glowRadiusPx = GLOW_RADIUS * monScale;
             if (distSq < glowRadiusPx * glowRadiusPx) {
                 const float glowFactor = 1.0f - sqrtf(distSq) / glowRadiusPx;
-                dotSz += (GLOW_DOT_SIZE - DOT_SIZE) * monScale * glowFactor;
+                dotSz += (scaledSpacing * DOT_GLOW_RATIO - dotSz) * glowFactor;
                 dotColor.r += (themeColors.glowDotColor.r - dotColor.r) * glowFactor;
                 dotColor.g += (themeColors.glowDotColor.g - dotColor.g) * glowFactor;
                 dotColor.b += (themeColors.glowDotColor.b - dotColor.b) * glowFactor;
             }
 
             const float half = dotSz / 2.0f;
-            g_pHyprOpenGL->renderRect(CBox{x - half, y - half, dotSz, dotSz}, dotColor, {});
+            g_pHyprOpenGL->renderRect(CBox{x - half, y - half, dotSz, dotSz}, dotColor, {.round = (int)half});
         }
     }
 
