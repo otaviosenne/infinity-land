@@ -263,25 +263,27 @@ void CCanvasLayout::onEndDragWindow() {
         g_pCanvasPersistence->trackWindow(DRAGGINGWINDOW->m_initialClass, DRAGGINGWINDOW->m_position, DRAGGINGWINDOW->m_size);
         g_pCanvasPersistence->scheduleSave();
 
-        std::vector<CBox> otherBoxes;
-        for (const auto& ref : m_windows) {
-            const auto w = ref.lock();
-            if (!w || w == DRAGGINGWINDOW)
-                continue;
-            otherBoxes.emplace_back(CBox{w->m_position.x, w->m_position.y, w->m_size.x, w->m_size.y});
-        }
-
-        const auto resolved = resolveOverlap(DRAGGINGWINDOW->m_position, DRAGGINGWINDOW->m_size, otherBoxes);
-        if (resolved.x != DRAGGINGWINDOW->m_position.x || resolved.y != DRAGGINGWINDOW->m_position.y) {
-            DRAGGINGWINDOW->m_position = resolved;
-            DRAGGINGWINDOW->m_realPosition->setValueAndWarp(resolved);
-            g_pCanvasPersistence->trackWindow(DRAGGINGWINDOW->m_initialClass, resolved, DRAGGINGWINDOW->m_size);
-            g_pCanvasPersistence->scheduleSave();
-            g_pCanvasViewport->damageAllMonitors();
-        }
-
-        if (g_pCanvasFrameManager)
+        const bool assignedToFrame = g_pCanvasFrameManager &&
             g_pCanvasFrameManager->assignWindowIfInsideFrame(DRAGGINGWINDOW);
+
+        if (!assignedToFrame) {
+            std::vector<CBox> otherBoxes;
+            for (const auto& ref : m_windows) {
+                const auto w = ref.lock();
+                if (!w || w == DRAGGINGWINDOW)
+                    continue;
+                otherBoxes.emplace_back(CBox{w->m_position.x, w->m_position.y, w->m_size.x, w->m_size.y});
+            }
+
+            const auto resolved = resolveOverlap(DRAGGINGWINDOW->m_position, DRAGGINGWINDOW->m_size, otherBoxes);
+            if (resolved.x != DRAGGINGWINDOW->m_position.x || resolved.y != DRAGGINGWINDOW->m_position.y) {
+                DRAGGINGWINDOW->m_position = resolved;
+                DRAGGINGWINDOW->m_realPosition->setValueAndWarp(resolved);
+                g_pCanvasPersistence->trackWindow(DRAGGINGWINDOW->m_initialClass, resolved, DRAGGINGWINDOW->m_size);
+                g_pCanvasPersistence->scheduleSave();
+                g_pCanvasViewport->damageAllMonitors();
+            }
+        }
 
         if (g_pCanvasUndoRedo) {
             const auto finalPos  = DRAGGINGWINDOW->m_position;

@@ -9,7 +9,7 @@ class CCanvasFrameManager {
     void           createFrame();
     void           deleteFrame(uint64_t id);
     void           assignFocusedWindow();
-    void           assignWindowIfInsideFrame(PHLWINDOW pWindow);
+    bool           assignWindowIfInsideFrame(PHLWINDOW pWindow);
     void           switchTab(int tabIndex);
     void           nextTab();
     void           prevTab();

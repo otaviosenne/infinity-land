@@ -65,8 +65,8 @@ void CCanvasFrameManager::prevTab() {
     frame->setActiveTab(prev);
 }
 
-void CCanvasFrameManager::assignWindowIfInsideFrame(PHLWINDOW pWindow) {
-    if (!pWindow || m_frames.empty()) return;
+bool CCanvasFrameManager::assignWindowIfInsideFrame(PHLWINDOW pWindow) {
+    if (!pWindow || m_frames.empty()) return false;
 
     const auto wPos  = pWindow->m_position;
     const auto wSize = pWindow->m_size;
@@ -82,9 +82,10 @@ void CCanvasFrameManager::assignWindowIfInsideFrame(PHLWINDOW pWindow) {
             f->assignWindow(pWindow);
             for (auto const& m : g_pCompositor->m_monitors)
                 m->addDamage(CBox{0, 0, INT16_MAX, INT16_MAX});
-            return;
+            return true;
         }
     }
+    return false;
 }
 
 bool CCanvasFrameManager::isWindowInAnyFrame(PHLWINDOW pWindow) const {
