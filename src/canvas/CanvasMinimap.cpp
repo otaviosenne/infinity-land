@@ -3,6 +3,21 @@
 #include "../Compositor.hpp"
 #include "../render/pass/MinimapPassElement.hpp"
 #include "../render/Renderer.hpp"
+#include <cmath>
+
+double CCanvasMinimap::zoomBarFillRatio(double scale) const {
+    static constexpr double LOG_MIN = -2.302585; // log(0.1)
+    static constexpr double LOG_MAX =  1.098612; // log(3.0)
+    const double            logScale = std::log(scale);
+
+    double ratio;
+    if (scale <= 1.0)
+        ratio = 0.5 * (logScale - LOG_MIN) / (0.0 - LOG_MIN);
+    else
+        ratio = 0.5 + 0.5 * logScale / LOG_MAX;
+
+    return std::clamp(ratio, 0.0, 1.0);
+}
 
 CBox CCanvasMinimap::canvasBounds() const {
     double minX = 1e9, minY = 1e9, maxX = -1e9, maxY = -1e9;
@@ -79,8 +94,9 @@ void CCanvasMinimap::render(PHLMONITOR pMonitor, const CRegion& damage) {
         const double barH = 4;
         const double barX = mmBox.x;
         mmData.rects.push_back({CBox{barX, barY, barW, barH}, CHyprColor(0.2, 0.2, 0.2, 0.6), 2});
-        const double fillRatio = std::clamp((zoomPct - 0.1) / 2.9, 0.0, 1.0);
+        const double fillRatio = zoomBarFillRatio(zoomPct);
         mmData.rects.push_back({CBox{barX, barY, barW * fillRatio, barH}, CHyprColor(0.4, 0.6, 0.9, 0.9), 2});
+        mmData.rects.push_back({CBox{barX + barW * 0.5 - 1, barY - 1, 2, barH + 2}, CHyprColor(0.8, 0.8, 0.8, 0.5), 0});
         g_pHyprRenderer->m_renderPass.add(makeUnique<CMinimapPassElement>(mmData));
         return;
     }
@@ -125,9 +141,10 @@ void CCanvasMinimap::render(PHLMONITOR pMonitor, const CRegion& damage) {
 
     mmData.rects.push_back({CBox{barX, barY, barW, barH}, CHyprColor(0.2, 0.2, 0.2, 0.6), 2});
 
-    const double fillRatio = std::clamp((zoomPct - 0.1) / 2.9, 0.0, 1.0);
+    const double fillRatio = zoomBarFillRatio(zoomPct);
     const double fillW = barW * fillRatio;
     mmData.rects.push_back({CBox{barX, barY, fillW, barH}, CHyprColor(0.4, 0.6, 0.9, 0.9), 2});
+    mmData.rects.push_back({CBox{barX + barW * 0.5 - 1, barY - 1, 2, barH + 2}, CHyprColor(0.8, 0.8, 0.8, 0.5), 0});
 
     g_pHyprRenderer->m_renderPass.add(makeUnique<CMinimapPassElement>(mmData));
 }
