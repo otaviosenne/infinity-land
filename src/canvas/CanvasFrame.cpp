@@ -12,9 +12,9 @@ CCanvasFrame::CCanvasFrame(uint64_t id, const Vector2D& pos, const Vector2D& siz
 }
 
 std::vector<CBox> CCanvasFrame::computeTileLayout(int count) const {
-    const double contentY = TOTAL_HEADER;
+    const double contentY = 0;
     const double contentW = m_size.x;
-    const double contentH = m_size.y - TOTAL_HEADER;
+    const double contentH = m_size.y;
 
     if (count <= 0) return {};
     if (count == 1) return {{0, contentY, contentW, contentH}};
@@ -147,58 +147,18 @@ void CCanvasFrame::render(PHLMONITOR pMonitor) {
 
     if (sw <= 2 || sh <= 2) return;
 
-    const double titleH = TITLE_BAR_H * scale;
-    const double tabsH  = TABS_BAR_H  * scale;
-    const double bw     = std::max(1.0, BORDER_W * scale);
+    const double bw = std::max(1.0, BORDER_W * scale);
 
-    auto addRect = [&](const CBox& box, const CHyprColor& color, int round = 0) {
+    auto addRect = [&](const CBox& box, const CHyprColor& color) {
         CRectPassElement::SRectData data;
         data.box   = box;
         data.color = color;
-        data.round = round;
+        data.round = 0;
         g_pHyprRenderer->m_renderPass.add(makeUnique<CRectPassElement>(data));
     };
-
-    addRect({screenTL.x, screenTL.y, sw, sh}, CHyprColor(0.08f, 0.08f, 0.09f, 0.92f), 6);
 
     addRect({screenTL.x,      screenTL.y,      sw, bw}, CHyprColor(1.f, 1.f, 1.f, 0.85f));
     addRect({screenTL.x,      screenBR.y - bw, sw, bw}, CHyprColor(1.f, 1.f, 1.f, 0.85f));
     addRect({screenTL.x,      screenTL.y,      bw, sh}, CHyprColor(1.f, 1.f, 1.f, 0.85f));
     addRect({screenBR.x - bw, screenTL.y,      bw, sh}, CHyprColor(1.f, 1.f, 1.f, 0.85f));
-
-    addRect({screenTL.x + bw, screenTL.y + bw, sw - bw * 2, titleH},
-            CHyprColor(0.12f, 0.12f, 0.14f, 1.0f));
-
-    const double dotSize = std::max(4.0, 10.0 * scale);
-    const double dotY    = screenTL.y + bw + (titleH - dotSize) / 2.0;
-    const double dotGap  = dotSize * 1.6;
-    const double dotX0   = screenTL.x + bw + 8.0 * scale;
-    addRect({dotX0,             dotY, dotSize, dotSize}, CHyprColor(0.94f, 0.34f, 0.34f, 1.f), (int)(dotSize / 2));
-    addRect({dotX0 + dotGap,    dotY, dotSize, dotSize}, CHyprColor(0.98f, 0.73f, 0.24f, 1.f), (int)(dotSize / 2));
-    addRect({dotX0 + dotGap*2,  dotY, dotSize, dotSize}, CHyprColor(0.30f, 0.77f, 0.40f, 1.f), (int)(dotSize / 2));
-
-    const double tabsY = screenTL.y + bw + titleH;
-    addRect({screenTL.x + bw, tabsY, sw - bw * 2, tabsH},
-            CHyprColor(0.10f, 0.10f, 0.11f, 1.0f));
-
-    const int    numTabs = (int)m_tabs.size();
-    const double tabPad  = std::max(2.0, 3.0 * scale);
-    const double tabW    = (sw - bw * 2) / numTabs;
-
-    for (int i = 0; i < numTabs; i++) {
-        const double tx = screenTL.x + bw + i * tabW + tabPad;
-        const double ty = tabsY + tabPad;
-        const double tw = tabW - tabPad * 2;
-        const double th = tabsH - tabPad * 2;
-        if (tw <= 0 || th <= 0) continue;
-
-        const CHyprColor tabColor = (i == m_activeTabIndex)
-            ? CHyprColor(0.95f, 0.95f, 0.95f, 1.0f)
-            : CHyprColor(0.25f, 0.25f, 0.28f, 0.8f);
-        addRect({tx, ty, tw, th}, tabColor, (int)std::max(2.0, 3.0 * scale));
-    }
-
-    const double sepY = tabsY + tabsH;
-    addRect({screenTL.x + bw, sepY, sw - bw * 2, std::max(1.0, scale)},
-            CHyprColor(1.f, 1.f, 1.f, 0.12f));
 }

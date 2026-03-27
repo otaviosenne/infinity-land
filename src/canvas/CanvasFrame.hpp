@@ -30,9 +30,6 @@ class CCanvasFrame {
     const std::vector<SCanvasFrameTab>& tabs() const { return m_tabs; }
     uint64_t    id() const { return m_id; }
 
-    static constexpr double TITLE_BAR_H  = 32.0;
-    static constexpr double TABS_BAR_H   = 28.0;
-    static constexpr double TOTAL_HEADER = TITLE_BAR_H + TABS_BAR_H;
     static constexpr double BORDER_W     = 2.0;
     static constexpr double PARK_OFFSET  = 8000.0;
 
