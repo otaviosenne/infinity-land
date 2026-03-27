@@ -65,6 +65,6 @@ void CCanvasViewport::zoomToFit(const CBox& canvasBox) {
 
 void CCanvasViewport::damageAllMonitors() {
     for (auto const& m : g_pCompositor->m_monitors) {
-        m->m_damage.damageEntire();
+        m->addDamage(CBox{0, 0, INT16_MAX, INT16_MAX});
     }
 }
