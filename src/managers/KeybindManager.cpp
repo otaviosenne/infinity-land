@@ -3515,25 +3515,14 @@ SDispatchResult CKeybindManager::canvasRedo(std::string) {
 }
 
 SDispatchResult CKeybindManager::canvasScreenshot(std::string args) {
-    const auto homeDir    = std::string(getenv("HOME") ? getenv("HOME") : "/tmp");
-    const auto outputDir  = homeDir + "/Pictures/Screenshots";
+    const auto homeDir   = std::string(getenv("HOME") ? getenv("HOME") : "/tmp");
+    const auto outputDir = homeDir + "/Pictures/Screenshots";
 
     std::filesystem::create_directories(outputDir);
 
-    const auto now  = std::chrono::system_clock::now();
-    const auto time = std::chrono::system_clock::to_time_t(now);
-    std::tm    tm{};
-    localtime_r(&time, &tm);
+    const std::string cmd = "flameshot gui --path \"" + outputDir + "\"";
 
-    char timestamp[32];
-    std::strftime(timestamp, sizeof(timestamp), "%Y-%m-%d_%H-%M-%S", &tm);
-
-    const std::string outputPath = outputDir + "/infinity-" + timestamp + ".png";
-    const std::string cmd        = "sh -c 'grim \"" + outputPath + "\"" +
-                                   " && wl-copy < \"" + outputPath + "\"" +
-                                   " && notify-send -i camera-photo \"Infinity Land\" \"Screenshot salvo\\n" + outputPath + "\"'";
-
-    Debug::log(LOG, "canvasScreenshot: saving to {}", outputPath);
+    Debug::log(LOG, "canvasScreenshot: launching flameshot in {}", outputDir);
 
     spawnRawProc(cmd, nullptr);
     return {};
