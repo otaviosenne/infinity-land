@@ -20,6 +20,7 @@
 #include "managers/PointerManager.hpp"
 #include "../desktop/LayerSurface.hpp"
 #include "../managers/LayoutManager.hpp"
+#include "../canvas/CanvasViewport.hpp"
 #include "../managers/EventManager.hpp"
 #include "../managers/animation/AnimationManager.hpp"
 
@@ -889,9 +890,13 @@ void Events::listener_commitWindow(void* owner, void* data) {
     if (g_pSeatManager->m_isPointerFrameCommit) {
         g_pSeatManager->m_isPointerFrameSkipped = false;
         g_pSeatManager->m_isPointerFrameCommit  = false;
-    } else
-        g_pHyprRenderer->damageSurface(PWINDOW->m_wlSurface->resource(), PWINDOW->m_realPosition->goal().x, PWINDOW->m_realPosition->goal().y,
+    } else {
+        const auto canvasPos   = PWINDOW->m_realPosition->goal();
+        const auto surfacePos  = g_pCanvasViewport ? g_pCanvasViewport->canvasToScreen(canvasPos) : canvasPos;
+        g_pHyprRenderer->damageSurface(PWINDOW->m_wlSurface->resource(), surfacePos.x, surfacePos.y,
                                        PWINDOW->m_isX11 ? 1.0 / PWINDOW->m_X11SurfaceScaledBy : 1.0);
+        g_pHyprRenderer->damageWindow(PWINDOW, true);
+    }
 
     if (g_pSeatManager->m_isPointerFrameSkipped) {
         g_pPointerManager->sendStoredMovement();

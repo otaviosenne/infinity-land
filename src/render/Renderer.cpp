@@ -2007,7 +2007,13 @@ void CHyprRenderer::damageWindow(PHLWINDOW pWindow, bool forceFull) {
 
     for (auto const& m : g_pCompositor->m_monitors) {
         if (forceFull || shouldRenderWindow(pWindow, m)) { // only damage if window is rendered on monitor
-            CBox fixedDamageBox = {windowBox.x - m->m_position.x, windowBox.y - m->m_position.y, windowBox.width, windowBox.height};
+            CBox screenBox = windowBox;
+            if (g_pCanvasViewport) {
+                const auto screenPos = g_pCanvasViewport->canvasToScreen({windowBox.x, windowBox.y});
+                const auto scale     = g_pCanvasViewport->scale();
+                screenBox            = {screenPos.x, screenPos.y, windowBox.width * scale, windowBox.height * scale};
+            }
+            CBox fixedDamageBox = {screenBox.x - m->m_position.x, screenBox.y - m->m_position.y, screenBox.width, screenBox.height};
             fixedDamageBox.scale(m->m_scale);
             m->addDamage(fixedDamageBox);
         }
